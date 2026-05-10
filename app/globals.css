@@ -87,12 +87,15 @@
 
   /* Warning */
   --palette-warning-50: #f8efd8;
+  --palette-warning-100: #f5eddb;
   --palette-warning-500: #c68a12;
   --palette-warning-600: #a8740e;
+  --palette-warning-muted: #8a6b16;
   --palette-warning-700: #845b0a;
 
   /* Danger */
   --palette-danger-50: #f7e5e2;
+  --palette-danger-100: #fbe5df;
   --palette-danger-500: #c0392b;
   --palette-danger-600: #9b2a2a;
   --palette-danger-700: #7a2020;
