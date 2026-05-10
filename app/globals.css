@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -49,6 +49,28 @@
 }
 
 :root {
+  /* ===== PRIMITIVE PALETTE ===== */
+  /* Brand — replace these oklch values with your brand colors later */
+  --palette-brand-50: oklch(0.97 0.01 250);
+  --palette-brand-100: oklch(0.93 0.02 250);
+  --palette-brand-200: oklch(0.86 0.04 250);
+  --palette-brand-300: oklch(0.76 0.08 250);
+  --palette-brand-400: oklch(0.66 0.12 250);
+  --palette-brand-500: oklch(0.55 0.16 250);
+  --palette-brand-600: oklch(0.47 0.14 250);
+  --palette-brand-700: oklch(0.39 0.12 250);
+  --palette-brand-800: oklch(0.32 0.09 250);
+  --palette-brand-900: oklch(0.24 0.06 250);
+
+  /* Success */
+  --palette-success-500: oklch(0.62 0.19 145);
+  --palette-success-600: oklch(0.52 0.17 145);
+
+  /* Warning */
+  --palette-warning-500: oklch(0.75 0.18 85);
+  --palette-warning-600: oklch(0.65 0.16 85);
+
+  /* ===== SEMANTIC TOKENS ===== */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
