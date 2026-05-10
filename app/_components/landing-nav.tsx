@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export function LandingNav() {
   return (
-    <header className="mx-auto flex max-w-[1200px] items-center justify-between px-8 py-6">
+    <header className="flex w-full items-center justify-between px-8 py-6">
       <Link href="/" className="inline-flex items-center gap-2.5 no-underline">
         <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
           <circle cx="16" cy="16" r="15" className="stroke-primary" strokeWidth="1.6" />
@@ -18,21 +18,7 @@ export function LandingNav() {
           NexTest
         </span>
       </Link>
-      <nav className="hidden items-center gap-7 md:flex">
-        <a
-          href="#how"
-          className="text-[14px] font-medium text-[var(--palette-neutral-600)] no-underline hover:text-foreground"
-        >
-          Nasil calisir
-        </a>
-        <a
-          href="#features"
-          className="text-[14px] font-medium text-[var(--palette-neutral-600)] no-underline hover:text-foreground"
-        >
-          Ozellikler
-        </a>
-      </nav>
-      <div className="flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-2">
         <Link
           href="/login"
           className="rounded-[8px] px-3 py-2 text-[13px] font-medium text-[var(--palette-neutral-600)] no-underline hover:bg-secondary"
