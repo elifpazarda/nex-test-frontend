@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRegister } from './_hooks/use-register';
 
 export default function RegisterPage() {
-  const { form, onSubmit, isLoading, error } = useRegister();
+  const { form, onSubmit, isLoading } = useRegister();
   const {
     register,
     formState: { errors },
@@ -26,12 +26,6 @@ export default function RegisterPage() {
 
         <form onSubmit={onSubmit}>
           <div className="flex flex-col gap-4">
-            {error && (
-              <div className="rounded-[10px] bg-[var(--palette-danger-50)] px-3.5 py-3 text-[13px] text-[var(--palette-danger-600)]">
-                {error}
-              </div>
-            )}
-
             {/* Name field */}
             <div className="flex flex-col gap-1.5">
               <label
@@ -40,7 +34,9 @@ export default function RegisterPage() {
               >
                 Isim
               </label>
-              <div className="flex items-center rounded-[10px] border border-[var(--palette-neutral-300)] bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]">
+              <div
+                className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] ${errors.name ? 'border-[var(--palette-danger-500)] shadow-[0_0_0_4px_rgba(192,57,43,0.1)]' : 'border-[var(--palette-neutral-300)] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]'}`}
+              >
                 <input
                   id="name"
                   type="text"
@@ -65,7 +61,9 @@ export default function RegisterPage() {
               >
                 E-posta
               </label>
-              <div className="flex items-center rounded-[10px] border border-[var(--palette-neutral-300)] bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]">
+              <div
+                className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] ${errors.email ? 'border-[var(--palette-danger-500)] shadow-[0_0_0_4px_rgba(192,57,43,0.1)]' : 'border-[var(--palette-neutral-300)] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]'}`}
+              >
                 <input
                   id="email"
                   type="email"
@@ -89,7 +87,9 @@ export default function RegisterPage() {
               >
                 Sifre
               </label>
-              <div className="flex items-center rounded-[10px] border border-[var(--palette-neutral-300)] bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]">
+              <div
+                className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] ${errors.password ? 'border-[var(--palette-danger-500)] shadow-[0_0_0_4px_rgba(192,57,43,0.1)]' : 'border-[var(--palette-neutral-300)] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]'}`}
+              >
                 <input
                   id="password"
                   type="password"
@@ -113,7 +113,9 @@ export default function RegisterPage() {
               >
                 Sifre Tekrari
               </label>
-              <div className="flex items-center rounded-[10px] border border-[var(--palette-neutral-300)] bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]">
+              <div
+                className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] transition-[border-color,box-shadow] duration-[120ms] ${errors.confirmPassword ? 'border-[var(--palette-danger-500)] shadow-[0_0_0_4px_rgba(192,57,43,0.1)]' : 'border-[var(--palette-neutral-300)] focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]'}`}
+              >
                 <input
                   id="confirmPassword"
                   type="password"

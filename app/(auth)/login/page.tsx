@@ -13,7 +13,7 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
-  const { form, onSubmit, isLoading, error } = useLogin();
+  const { form, onSubmit, isLoading } = useLogin();
   const {
     register,
     formState: { errors },
@@ -46,12 +46,6 @@ function LoginForm() {
 
         <form onSubmit={onSubmit}>
           <div className="flex flex-col gap-4">
-            {error && (
-              <div className="rounded-[10px] bg-[var(--palette-danger-50)] px-3.5 py-3 text-[13px] text-[var(--palette-danger-600)]">
-                {error}
-              </div>
-            )}
-
             {/* Email field */}
             <div className="flex flex-col gap-1.5">
               <label

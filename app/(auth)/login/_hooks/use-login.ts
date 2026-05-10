@@ -4,9 +4,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 import { authApi } from '@/lib/api/endpoints/auth';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 import { useAuth } from '@/hooks/use-auth';
+import type { ApiErrorResponse } from '@/types/api';
 
 export function useLogin() {
   const router = useRouter();
@@ -27,6 +30,15 @@ export function useLogin() {
       setTokens(accessToken, refreshToken);
       router.push(callbackUrl);
     },
+    onError: (error: Error) => {
+      let message = 'Giris yapilamadi. Lutfen tekrar deneyin.';
+      if (error instanceof AxiosError && error.response?.data) {
+        const body = error.response.data as ApiErrorResponse;
+        const msg = body.error?.message;
+        message = Array.isArray(msg) ? msg.join(', ') : msg || message;
+      }
+      toast.error('Giris basarisiz', { description: message, duration: 4000 });
+    },
   });
 
   const onSubmit = form.handleSubmit((data) => mutation.mutate(data));
@@ -35,6 +47,5 @@ export function useLogin() {
     form,
     onSubmit,
     isLoading: mutation.isPending,
-    error: mutation.error?.message ?? null,
   };
 }

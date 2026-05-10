@@ -47,10 +47,8 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Prevent infinite loop on refresh endpoint itself
-    if (originalRequest.url?.includes('/auth/refresh')) {
-      clearTokens();
-      redirectToLogin();
+    // Don't attempt token refresh for auth endpoints (login, register, refresh)
+    if (originalRequest.url?.includes('/auth/')) {
       return Promise.reject(error);
     }
 
