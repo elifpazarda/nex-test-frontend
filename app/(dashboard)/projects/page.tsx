@@ -6,11 +6,13 @@ import Link from 'next/link';
 import { FolderPlus, Search, LayoutGrid, List, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { projectsApi } from '@/lib/api/endpoints/projects';
+import { CreateProjectDialog } from './_components/create-project-dialog';
 
 export default function ProjectsPage() {
   const { user } = useAuth();
   const [q, setQ] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['projects'],
@@ -61,7 +63,10 @@ export default function ProjectsPage() {
             : 'Henuz bir projen yok. Ilk projeni olusturarak basla!'}
         </p>
         {projects.length > 0 && (
-          <button className="mt-5 inline-flex h-12 items-center gap-2 rounded-md bg-primary px-5 text-[16px] font-semibold text-primary-foreground shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-[background,transform] duration-100 hover:bg-[var(--palette-brand-700)] active:translate-y-[0.5px] active:bg-[var(--palette-brand-800)]">
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="mt-5 inline-flex h-12 items-center gap-2 rounded-md bg-primary px-5 text-[16px] font-semibold text-primary-foreground shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-[background,transform] duration-100 hover:bg-[var(--palette-brand-700)] active:translate-y-[0.5px] active:bg-[var(--palette-brand-800)]"
+          >
             <FolderPlus className="size-[18px]" />
             Yeni proje
           </button>
@@ -87,7 +92,10 @@ export default function ProjectsPage() {
           <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-muted-foreground">
             Ilk projenizi olusturun ve AI destekli test senaryolari uretmeye hemen baslayin.
           </p>
-          <button className="mt-6 inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-[14px] font-semibold text-primary-foreground shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-[background,transform] duration-100 hover:bg-[var(--palette-brand-700)] active:translate-y-[0.5px] active:bg-[var(--palette-brand-800)]">
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="mt-6 inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-[14px] font-semibold text-primary-foreground shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-[background,transform] duration-100 hover:bg-[var(--palette-brand-700)] active:translate-y-[0.5px] active:bg-[var(--palette-brand-800)]"
+          >
             <FolderPlus className="size-4" />
             Ilk projeni olustur
           </button>
@@ -220,7 +228,10 @@ export default function ProjectsPage() {
                   </div>
                 </Link>
               ))}
-              <button className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-[var(--palette-neutral-300)] bg-muted p-8 text-center transition-colors hover:border-primary hover:bg-accent">
+              <button
+                onClick={() => setDialogOpen(true)}
+                className="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-[var(--palette-neutral-300)] bg-muted p-8 text-center transition-colors hover:border-primary hover:bg-accent"
+              >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--palette-neutral-300)] bg-white text-muted-foreground">
                   <FolderPlus className="size-[18px]" />
                 </span>
@@ -270,6 +281,7 @@ export default function ProjectsPage() {
           )}
         </>
       )}
+      <CreateProjectDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }
