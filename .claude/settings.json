@@ -6,11 +6,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/safe-git.sh"
+            "command": ".claude/hooks/PreToolUse/safe-git.sh"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/safe-bash.sh"
+            "command": ".claude/hooks/PreToolUse/safe-bash.sh"
           }
         ]
       }
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/format.sh"
+            "command": ".claude/hooks/PostToolUse/format.sh"
           }
         ]
       }

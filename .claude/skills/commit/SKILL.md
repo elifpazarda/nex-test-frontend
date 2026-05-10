@@ -2,7 +2,12 @@
 name: commit
 description: Commits staged/unstaged changes using Conventional Commits v1.0.0 format.
 argument-hint: "commit message (optional)"
-disable-model-invocation: true
+allowed-tools:
+  - "Bash(git status*)"
+  - "Bash(git diff*)"
+  - "Bash(git log*)"
+  - "Bash(git add*)"
+  - "Bash(git commit*)"
 ---
 
 # Git Commit Skill
@@ -118,6 +123,7 @@ refactor: extract validation logic into shared utils
 
 ## Rules
 
+- **Always use bullet points** — commit body must list changes as bullet points (`-`), never as plain paragraphs
 - **Never add Co-Authored-By** — no AI attribution in commits
 - Never use `git add -A` or `git add .`
 - Never force push or delete branches
