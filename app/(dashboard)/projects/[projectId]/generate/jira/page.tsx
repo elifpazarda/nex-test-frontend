@@ -60,8 +60,8 @@ const PRI_COLORS: Record<string, { fg: string; bg: string }> = {
   low: { fg: '#3f3d38', bg: '#f4efe3' },
 };
 
-export default function GenerateJiraPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function GenerateJiraPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId: id } = use(params);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [q, setQ] = useState('');
   const [groupName, setGroupName] = useState('');

@@ -86,9 +86,9 @@ const KW_COLORS: Record<string, string> = {
 export default function CodePage({
   params,
 }: {
-  params: Promise<{ id: string; scenarioId: string }>;
+  params: Promise<{ projectId: string; scenarioId: string }>;
 }) {
-  const { id } = use(params);
+  const { projectId: id } = use(params);
   const [framework, setFramework] = useState<'cucumber' | 'playwright' | 'cypress'>('cucumber');
   const [copied, setCopied] = useState(false);
 

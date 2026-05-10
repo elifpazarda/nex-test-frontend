@@ -11,8 +11,8 @@ const CATEGORIES = [
 
 const SUGGESTIONS = ['Sepet · Odeme', 'Login akisi', 'Arama filtresi', 'Uyelik yonetimi'];
 
-export default function GenerateTextPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function GenerateTextPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId: id } = use(params);
   const [text, setText] = useState('');
   const [groupName, setGroupName] = useState('');
   const [groupType, setGroupType] = useState('feature');

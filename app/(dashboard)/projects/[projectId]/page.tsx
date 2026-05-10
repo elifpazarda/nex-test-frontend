@@ -98,8 +98,8 @@ const ACTIVITY = [
   },
 ];
 
-export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function ProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId: id } = use(params);
 
   return (
     <div className="mx-auto max-w-[1280px] px-8 py-8 pb-16">

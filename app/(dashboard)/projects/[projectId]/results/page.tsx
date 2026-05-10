@@ -108,8 +108,8 @@ const KW_COLORS: Record<string, string> = {
   And: '#a8a595',
 };
 
-export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function ResultsPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId: id } = use(params);
   const [discarded, setDiscarded] = useState<Set<string>>(new Set());
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string | null>(null);

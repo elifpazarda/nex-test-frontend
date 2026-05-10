@@ -3,11 +3,11 @@
 import { useState, use } from 'react';
 import Link from 'next/link';
 
-export default function GenerateExcelPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function GeneratePdfPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId: id } = use(params);
   const [file, setFile] = useState<File | null>(null);
   const [groupName, setGroupName] = useState('');
-  const [count, setCount] = useState(6);
+  const [count, setCount] = useState(8);
 
   return (
     <div className="mx-auto max-w-[1280px] px-8 py-7 pb-20">
@@ -21,16 +21,16 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
           Trendyol Checkout
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <span className="font-medium text-[#1a1a18]">Excel&apos;den uret</span>
+        <span className="font-medium text-[#1a1a18]">PDF&apos;den uret</span>
       </nav>
 
       {/* Hero */}
       <div className="mb-6">
         <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-          <em className="font-medium italic text-[#1a5a40]">Excel</em>&apos;den uret
+          <em className="font-medium italic text-[#1a5a40]">PDF</em>&apos;den uret
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Test case&apos;lerini iceren bir .xlsx dosyasi yukle.
+          PRD veya gereksinim dokumanini yukle, AI gereksinimleri cikarsin.
         </p>
       </div>
 
@@ -48,18 +48,18 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
         >
           Jira
         </Link>
+        <Link
+          href={`/projects/${id}/generate/excel`}
+          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] no-underline"
+        >
+          Excel
+        </Link>
         <button
           data-active
           className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] data-[active]:bg-[#1f6f4e] data-[active]:text-white data-[active]:shadow-[0_1px_3px_rgba(26,26,24,0.06)]"
         >
-          Excel
-        </button>
-        <Link
-          href={`/projects/${id}/generate/pdf`}
-          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] no-underline"
-        >
           PDF
-        </Link>
+        </button>
       </nav>
 
       {/* Two-column grid */}
@@ -68,7 +68,7 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
         <section>
           {!file ? (
             <label className="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[14px] border-[1.5px] border-dashed border-[#d6d3cb] bg-[#fbf8f1] p-12 text-center transition-colors hover:border-[#1f6f4e] hover:bg-[#ecf5f0]">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e8e1cf] bg-white text-[#157449]">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e8e1cf] bg-white text-[#b85b1a]">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
@@ -78,32 +78,39 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
                     strokeLinejoin="round"
                   />
                   <path
-                    d="M14 2v6h6M8 13h8M8 17h8M8 9h2"
+                    d="M14 2v6h6"
                     stroke="currentColor"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
+                  <path
+                    d="M9 15h6M9 11h2"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </span>
               <div>
-                <p className="text-[14px] font-semibold text-[#1a1a18]">Excel dosyasi yukle</p>
+                <p className="text-[14px] font-semibold text-[#1a1a18]">PDF dokumani yukle</p>
                 <p className="mt-1 text-[12px] text-[#7a7868]">
-                  Surukle birak veya tikla · .xlsx · Maks 5MB
+                  Surukle birak veya tikla · .pdf · Maks 10MB
                 </p>
               </div>
               <input
                 type="file"
-                accept=".xlsx"
+                accept=".pdf"
                 className="hidden"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
             </label>
           ) : (
-            <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#e8f3ee] text-[14px] font-bold text-[#157449]">
-                  E
+            <div className="flex flex-col gap-4">
+              {/* File info */}
+              <div className="flex items-center gap-3 rounded-[14px] border border-[#e8e1cf] bg-white p-5">
+                <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#fbedd8] text-[14px] font-bold text-[#b85b1a]">
+                  P
                 </span>
                 <div className="flex-1">
                   <p className="text-[14px] font-medium text-[#1a1a18]">{file.name}</p>
@@ -116,50 +123,59 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
                   Kaldir
                 </button>
               </div>
-              {/* Stats */}
-              <div className="mt-4 flex gap-3">
-                <span className="rounded-full bg-[#e8f3ee] px-2.5 py-1 text-[11px] font-medium text-[#157449]">
-                  24 satir
-                </span>
-                <span className="rounded-full bg-[#ecf5f0] px-2.5 py-1 text-[11px] font-medium text-[#1a5a40]">
-                  22 gecerli
-                </span>
-                <span className="rounded-full bg-[#f5eddb] px-2.5 py-1 text-[11px] font-medium text-[#8a6b16]">
-                  2 atlanacak
-                </span>
-              </div>
-              {/* Preview table */}
-              <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e8e1cf]">
-                <div className="grid grid-cols-[40px_70px_1fr_80px_80px] gap-2 border-b border-[#e8e1cf] bg-[#fbf8f1] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#a8a595]">
-                  <span>#</span>
-                  <span>ID</span>
-                  <span>Baslik</span>
-                  <span>Oncelik</span>
-                  <span>Modul</span>
+
+              {/* Page scanning simulation */}
+              <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-[14px] font-semibold text-[#1a1a18]">Sayfa taraniyor</h3>
+                  <span className="text-[12px] text-[#a8a595]">12 sayfa</span>
                 </div>
-                {[
-                  {
-                    n: 1,
-                    id: 'TC-01',
-                    title: 'Basarili odeme islemi',
-                    pri: 'High',
-                    mod: 'Payment',
-                  },
-                  { n: 2, id: 'TC-02', title: 'Suresi dolmus kart', pri: 'High', mod: 'Payment' },
-                  { n: 3, id: 'TC-03', title: 'Yetersiz bakiye', pri: 'Medium', mod: 'Payment' },
-                  { n: 4, id: 'TC-04', title: 'Gecersiz CVV', pri: 'Medium', mod: 'Validation' },
-                ].map((row) => (
-                  <div
-                    key={row.n}
-                    className="grid grid-cols-[40px_70px_1fr_80px_80px] gap-2 border-b border-[#f4efe3] px-3 py-2 text-[13px] last:border-0"
-                  >
-                    <span className="text-[#a8a595]">{row.n}</span>
-                    <span className="font-mono text-[11px] text-[#5c5a52]">{row.id}</span>
-                    <span className="text-[#1a1a18]">{row.title}</span>
-                    <span className="text-[#5c5a52]">{row.pri}</span>
-                    <span className="text-[#7a7868]">{row.mod}</span>
-                  </div>
-                ))}
+                <div className="grid grid-cols-6 gap-2">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex h-12 items-center justify-center rounded-[6px] border text-[11px] font-medium"
+                      style={{
+                        background: i < 8 ? '#e8f3ee' : i === 8 ? '#e5eef5' : '#f4efe3',
+                        borderColor: i < 8 ? '#d4e9dd' : i === 8 ? '#b8d4e8' : '#e8e1cf',
+                        color: i < 8 ? '#157449' : i === 8 ? '#1f5c87' : '#a8a595',
+                      }}
+                    >
+                      {i < 8 ? '✓' : i === 8 ? '...' : i + 1}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-[12px] text-[#7a7868]">
+                  8 / 12 sayfa tarandi · 14 gereksinim cikarildi
+                </p>
+              </div>
+
+              {/* Extracted requirements */}
+              <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
+                <h3 className="mb-3 text-[14px] font-semibold text-[#1a1a18]">
+                  Cikarilan gereksinimler
+                </h3>
+                <div className="flex flex-col gap-2">
+                  {[
+                    'Kullanici kredi karti ile odeme yapabilmeli',
+                    'Odeme basarisiz olursa anlasilir hata mesaji gosterilmeli',
+                    '3D Secure dogrulama zaman asiminda islem iptal edilmeli',
+                    'Farkli odeme yontemleri arasinda gecis yapilabilmeli',
+                    'Odeme sonrasi siparis onay e-postasi gonderilmeli',
+                  ].map((req, i) => (
+                    <label
+                      key={i}
+                      className="flex cursor-pointer items-start gap-2.5 rounded-[8px] border border-[#f4efe3] p-3 transition-colors hover:bg-[#fbf8f1]"
+                    >
+                      <input
+                        type="checkbox"
+                        defaultChecked
+                        className="mt-0.5 h-[16px] w-[16px] rounded-[4px] border-[1.5px] border-[#d6d3cb] accent-[#1f6f4e]"
+                      />
+                      <span className="text-[13px] text-[#1a1a18]">{req}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -185,11 +201,11 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-[13px] font-medium text-[#5c5a52]">
-                  Satir basina senaryo
+                  Gereksinim basina senaryo
                 </label>
                 <div className="inline-flex items-center rounded-[8px] border border-[#e8e1cf]">
                   <button
-                    onClick={() => setCount((c) => Math.max(1, c - 1))}
+                    onClick={() => setCount((c) => Math.max(3, c - 1))}
                     className="flex h-9 w-9 items-center justify-center rounded-l-[8px] bg-[#fbf8f1] text-[16px] text-[#5c5a52] hover:bg-[#f4efe3]"
                   >
                     −
@@ -198,7 +214,7 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
                     {count}
                   </span>
                   <button
-                    onClick={() => setCount((c) => Math.min(20, c + 1))}
+                    onClick={() => setCount((c) => Math.min(30, c + 1))}
                     className="flex h-9 w-9 items-center justify-center rounded-r-[8px] bg-[#fbf8f1] text-[16px] text-[#5c5a52] hover:bg-[#f4efe3]"
                   >
                     +
@@ -223,6 +239,10 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ id: st
               </svg>
               Senaryo uret
             </button>
+            <div className="mt-3.5 flex items-center justify-between text-[12px] text-[#7a7868]">
+              <span>Tahmini sure</span>
+              <strong className="font-medium text-[#1a1a18]">~ 12 sn</strong>
+            </div>
           </div>
         </aside>
       </div>
