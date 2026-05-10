@@ -3,6 +3,9 @@ import type { NextRequest } from 'next/server';
 
 const publicPaths = ['/login', '/register'];
 
+// Development: skip auth check to browse pages freely
+const isDev = process.env.NODE_ENV === 'development';
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -19,7 +22,7 @@ export function proxy(request: NextRequest) {
   }
 
   // Unauthenticated user on protected page → redirect to login
-  if (!publicPaths.includes(pathname) && !token) {
+  if (!isDev && !publicPaths.includes(pathname) && !token) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);

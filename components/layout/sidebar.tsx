@@ -1,6 +1,6 @@
 'use client';
 
-import { FolderKanban, Settings } from 'lucide-react';
+import { FolderKanban, Settings, Leaf } from 'lucide-react';
 import { SidebarNavItem } from './sidebar-nav-item';
 
 const navItems = [
@@ -13,10 +13,9 @@ export function Sidebar() {
     <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar lg:block">
       <div className="flex h-full flex-col">
         {/* Logo / App name */}
-        <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-          <span className="text-lg font-bold text-sidebar-foreground">
-            {process.env.NEXT_PUBLIC_APP_NAME ?? 'NexApp'}
-          </span>
+        <div className="flex h-[60px] items-center gap-2 border-b border-sidebar-border px-5">
+          <Leaf className="h-5 w-5 text-primary" />
+          <span className="font-heading text-lg font-semibold text-foreground">NexTest</span>
         </div>
 
         {/* Navigation */}
