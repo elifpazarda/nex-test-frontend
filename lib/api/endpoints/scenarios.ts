@@ -9,7 +9,15 @@ import type {
   GenerateResponse,
   ConvertBddResponse,
   ExportFormat,
+  ImportExcelResult,
 } from '@/types/scenario';
+
+/** Optional query params shared by all export endpoints */
+interface ExportOptions {
+  startDate?: string;
+  endDate?: string;
+  xrayFormat?: boolean;
+}
 
 export const scenariosApi = {
   // --- List & Detail ---
@@ -61,31 +69,27 @@ export const scenariosApi = {
     formData.append('groupId', groupId);
     formData.append('file', file);
     formData.append('saveResults', String(saveResults));
-    return apiClient.post<ApiResponse<unknown>>('/scenarios/import-excel', formData, {
+    return apiClient.post<ApiResponse<ImportExcelResult>>('/scenarios/import-excel', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
 
   // --- Export (returns file download) ---
-  exportByProject: (
-    projectId: string,
-    format: ExportFormat,
-    options?: { startDate?: string; endDate?: string; xrayFormat?: boolean },
-  ) =>
-    apiClient.get(`/scenarios/export/all/${projectId}`, {
+  exportByProject: (projectId: string, format: ExportFormat, options?: ExportOptions) =>
+    apiClient.get<Blob>(`/scenarios/export/all/${projectId}`, {
       params: { format, ...options },
       responseType: 'blob',
     }),
 
-  exportByGroup: (groupId: string, format: ExportFormat) =>
-    apiClient.get(`/scenarios/export/group/${groupId}`, {
-      params: { format },
+  exportByGroup: (groupId: string, format: ExportFormat, options?: ExportOptions) =>
+    apiClient.get<Blob>(`/scenarios/export/group/${groupId}`, {
+      params: { format, ...options },
       responseType: 'blob',
     }),
 
-  exportSingle: (id: string, format: ExportFormat) =>
-    apiClient.get(`/scenarios/export/${id}`, {
-      params: { format },
+  exportSingle: (id: string, format: ExportFormat, options?: ExportOptions) =>
+    apiClient.get<Blob>(`/scenarios/export/${id}`, {
+      params: { format, ...options },
       responseType: 'blob',
     }),
 };

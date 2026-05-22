@@ -1,24 +1,167 @@
 'use client';
 
-import { useState, use } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { Loader2, Sparkles, FileText, X } from 'lucide-react';
+import { projectsApi } from '@/lib/api/endpoints/projects';
+import { scenariosApi } from '@/lib/api/endpoints/scenarios';
+import { scenarioGroupsApi } from '@/lib/api/endpoints/scenario-groups';
+import { getApiErrorMessage } from '@/lib/api/error';
+import { generateFileSchema, type GenerateFileFormData } from '@/lib/validations/scenario';
+import { SCENARIO_GROUP_TYPES } from '@/types/scenario-group';
+import type { GenerateResponse } from '@/types/scenario';
+import { ScenarioReview } from '@/components/shared/scenario-review';
+import { GenerateSourceTabs } from '@/components/shared/generate-source-tabs';
+
+const GROUP_TYPE_LABELS: Record<string, string> = {
+  FEATURE: 'Feature',
+  REGRESSION: 'Regression',
+  BUG: 'Bug',
+  SMOKE: 'Smoke',
+  INTEGRATION: 'Integration',
+  E2E: 'E2E',
+  PERFORMANCE: 'Performance',
+  OTHER: 'Diger',
+};
+
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function GeneratePdfPage({ params }: { params: Promise<{ projectId: string }> }) {
-  const { projectId: id } = use(params);
-  const [file, setFile] = useState<File | null>(null);
-  const [groupName, setGroupName] = useState('');
-  const [count, setCount] = useState(8);
+  const { projectId } = use(params);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
+  const [file, setFile] = useState<File | null>(null);
+  const [generated, setGenerated] = useState<GenerateResponse | null>(null);
+
+  const { data: project } = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: () => projectsApi.getById(projectId),
+    select: (res) => res.data.data,
+  });
+
+  const form = useForm<GenerateFileFormData>({
+    resolver: zodResolver(generateFileSchema),
+    defaultValues: { name: '', type: 'FEATURE' },
+  });
+
+  const {
+    register,
+    getValues,
+    formState: { errors },
+  } = form;
+
+  function pickFile(f: File | null) {
+    if (!f) return;
+    if (!f.name.toLowerCase().endsWith('.pdf')) {
+      toast.error('Gecersiz dosya', { description: 'Yalnizca .pdf dosyalari kabul edilir.' });
+      return;
+    }
+    if (f.size > MAX_SIZE) {
+      toast.error('Dosya cok buyuk', { description: 'PDF dosyasi en fazla 10MB olabilir.' });
+      return;
+    }
+    setFile(f);
+  }
+
+  // --- Adim 1: PDF'den AI ile uret (kaydetmez) ---
+  const generateMutation = useMutation({
+    mutationFn: () => scenariosApi.generateFromPdf(projectId, file!),
+    onSuccess: (res) => {
+      setGenerated(res.data.data);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    onError: (error) => {
+      toast.error('Senaryo uretilemedi', {
+        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        duration: 4000,
+      });
+    },
+  });
+
+  // --- Adim 2: Grup olustur + senaryolari kaydet ---
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const { name, type } = getValues();
+      const data = generated!;
+      const groupRes = await scenarioGroupsApi.create({ name, type, projectId });
+      const groupId = groupRes.data.data.id;
+      await scenariosApi.save({
+        groupId,
+        input: data.input,
+        sourceType: 'pdf',
+        sourceRef: file?.name ?? null,
+        scenarios: data.scenarios.map((s) => ({
+          title: s.title,
+          category: s.category,
+          priority: s.priority,
+          preconditions: s.preconditions,
+          steps: s.steps,
+          expectedResult: s.expectedResult,
+        })),
+      });
+      return groupId;
+    },
+    onSuccess: (groupId) => {
+      toast.success('Senaryo grubu kaydedildi');
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['scenario-groups', projectId] });
+      router.push(`/projects/${projectId}/results?groupId=${groupId}`);
+    },
+    onError: (error) => {
+      toast.error('Kaydedilemedi', {
+        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        duration: 4000,
+      });
+    },
+  });
+
+  const onGenerate = form.handleSubmit(() => {
+    if (!file) {
+      toast.error('Dosya secilmedi', { description: 'Once bir .pdf dosyasi yukleyin.' });
+      return;
+    }
+    generateMutation.mutate();
+  });
+
+  // ===========================================================================
+  // Adim 2 ekrani — uretilen senaryolari incele ve kaydet
+  // ===========================================================================
+  if (generated) {
+    return (
+      <ScenarioReview
+        projectId={projectId}
+        projectName={project?.name ?? 'Proje'}
+        groupName={getValues('name')}
+        scenarios={generated.scenarios}
+        isSaving={saveMutation.isPending}
+        onBack={() => setGenerated(null)}
+        onSave={() => saveMutation.mutate()}
+      />
+    );
+  }
+
+  // ===========================================================================
+  // Adim 1 ekrani — PDF yukleme + grup ayarlari
+  // ===========================================================================
   return (
-    <div className="mx-auto max-w-[1280px] px-8 py-7 pb-20">
+    <form onSubmit={onGenerate} className="mx-auto max-w-[1280px] px-8 py-7 pb-20">
       {/* Breadcrumb */}
       <nav className="mb-5 flex items-center gap-1.5 text-[13px] text-[#7a7868]">
         <Link href="/projects" className="text-[#7a7868] no-underline hover:text-[#1a1a18]">
           Projeler
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <Link href={`/projects/${id}`} className="text-[#7a7868] no-underline hover:text-[#1a1a18]">
-          Trendyol Checkout
+        <Link
+          href={`/projects/${projectId}`}
+          className="text-[#7a7868] no-underline hover:text-[#1a1a18]"
+        >
+          {project?.name ?? 'Proje'}
         </Link>
         <span className="text-[#a8a595]">/</span>
         <span className="font-medium text-[#1a1a18]">PDF&apos;den uret</span>
@@ -30,37 +173,12 @@ export default function GeneratePdfPage({ params }: { params: Promise<{ projectI
           <em className="font-medium italic text-[#1a5a40]">PDF</em>&apos;den uret
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          PRD veya gereksinim dokumanini yukle, AI gereksinimleri cikarsin.
+          PRD veya gereksinim dokumanini yukle, AI senaryolari uretsin.
         </p>
       </div>
 
       {/* Source tabs */}
-      <nav className="mb-6 inline-flex gap-1 rounded-[10px] bg-[#f4efe3] p-1">
-        <Link
-          href={`/projects/${id}/generate`}
-          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] no-underline"
-        >
-          Metin
-        </Link>
-        <Link
-          href={`/projects/${id}/generate/jira`}
-          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] no-underline"
-        >
-          Jira
-        </Link>
-        <Link
-          href={`/projects/${id}/generate/excel`}
-          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] no-underline"
-        >
-          Excel
-        </Link>
-        <button
-          data-active
-          className="rounded-[8px] px-4 py-2 text-[13px] font-medium text-[#5c5a52] data-[active]:bg-[#1f6f4e] data-[active]:text-white data-[active]:shadow-[0_1px_3px_rgba(26,26,24,0.06)]"
-        >
-          PDF
-        </button>
-      </nav>
+      <GenerateSourceTabs projectId={projectId} active="pdf" />
 
       {/* Two-column grid */}
       <div className="grid grid-cols-[1fr_360px] gap-6">
@@ -69,28 +187,7 @@ export default function GeneratePdfPage({ params }: { params: Promise<{ projectI
           {!file ? (
             <label className="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[14px] border-[1.5px] border-dashed border-[#d6d3cb] bg-[#fbf8f1] p-12 text-center transition-colors hover:border-[#1f6f4e] hover:bg-[#ecf5f0]">
               <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e8e1cf] bg-white text-[#b85b1a]">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M14 2v6h6"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 15h6M9 11h2"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <FileText className="size-[22px]" />
               </span>
               <div>
                 <p className="text-[14px] font-semibold text-[#1a1a18]">PDF dokumani yukle</p>
@@ -102,81 +199,33 @@ export default function GeneratePdfPage({ params }: { params: Promise<{ projectI
                 type="file"
                 accept=".pdf"
                 className="hidden"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
               />
             </label>
           ) : (
-            <div className="flex flex-col gap-4">
-              {/* File info */}
-              <div className="flex items-center gap-3 rounded-[14px] border border-[#e8e1cf] bg-white p-5">
-                <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#fbedd8] text-[14px] font-bold text-[#b85b1a]">
-                  P
+            <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#fbedd8] text-[#b85b1a]">
+                  <FileText className="size-5" />
                 </span>
                 <div className="flex-1">
                   <p className="text-[14px] font-medium text-[#1a1a18]">{file.name}</p>
                   <p className="text-[12px] text-[#7a7868]">{(file.size / 1024).toFixed(1)} KB</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setFile(null)}
-                  className="rounded-[6px] px-2 py-1 text-[12px] font-medium text-[#5c5a52] hover:bg-[#f4efe3]"
+                  disabled={generateMutation.isPending}
+                  className="rounded-[6px] p-1.5 text-[#5c5a52] hover:bg-[#f4efe3] disabled:opacity-50"
+                  aria-label="Dosyayi kaldir"
                 >
-                  Kaldir
+                  <X className="size-4" />
                 </button>
               </div>
-
-              {/* Page scanning simulation */}
-              <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-[14px] font-semibold text-[#1a1a18]">Sayfa taraniyor</h3>
-                  <span className="text-[12px] text-[#a8a595]">12 sayfa</span>
-                </div>
-                <div className="grid grid-cols-6 gap-2">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex h-12 items-center justify-center rounded-[6px] border text-[11px] font-medium"
-                      style={{
-                        background: i < 8 ? '#e8f3ee' : i === 8 ? '#e5eef5' : '#f4efe3',
-                        borderColor: i < 8 ? '#d4e9dd' : i === 8 ? '#b8d4e8' : '#e8e1cf',
-                        color: i < 8 ? '#157449' : i === 8 ? '#1f5c87' : '#a8a595',
-                      }}
-                    >
-                      {i < 8 ? '✓' : i === 8 ? '...' : i + 1}
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 text-[12px] text-[#7a7868]">
-                  8 / 12 sayfa tarandi · 14 gereksinim cikarildi
-                </p>
-              </div>
-
-              {/* Extracted requirements */}
-              <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-5">
-                <h3 className="mb-3 text-[14px] font-semibold text-[#1a1a18]">
-                  Cikarilan gereksinimler
-                </h3>
-                <div className="flex flex-col gap-2">
-                  {[
-                    'Kullanici kredi karti ile odeme yapabilmeli',
-                    'Odeme basarisiz olursa anlasilir hata mesaji gosterilmeli',
-                    '3D Secure dogrulama zaman asiminda islem iptal edilmeli',
-                    'Farkli odeme yontemleri arasinda gecis yapilabilmeli',
-                    'Odeme sonrasi siparis onay e-postasi gonderilmeli',
-                  ].map((req, i) => (
-                    <label
-                      key={i}
-                      className="flex cursor-pointer items-start gap-2.5 rounded-[8px] border border-[#f4efe3] p-3 transition-colors hover:bg-[#fbf8f1]"
-                    >
-                      <input
-                        type="checkbox"
-                        defaultChecked
-                        className="mt-0.5 h-[16px] w-[16px] rounded-[4px] border-[1.5px] border-[#d6d3cb] accent-[#1f6f4e]"
-                      />
-                      <span className="text-[13px] text-[#1a1a18]">{req}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <p className="mt-4 rounded-[10px] bg-[#fbf8f1] px-3.5 py-3 text-[12px] text-[#7a7868]">
+                Dosya yuklendi. <strong className="text-[#1a1a18]">Senaryo uret</strong>{' '}
+                butonuna basildiginda PDF icerigi AI ile islenecek.
+              </p>
             </div>
           )}
         </section>
@@ -189,63 +238,65 @@ export default function GeneratePdfPage({ params }: { params: Promise<{ projectI
             </div>
             <div className="flex flex-col gap-4 p-[18px_22px]">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-[#5c5a52]">Grup adi</label>
-                <div className="flex items-center rounded-[10px] border border-[#d6d3cb] bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] focus-within:border-[#1f6f4e] focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]">
+                <label htmlFor="group-name" className="text-[13px] font-medium text-[#5c5a52]">
+                  Grup adi
+                </label>
+                <div
+                  className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] ${
+                    errors.name
+                      ? 'border-[#c0392b] shadow-[0_0_0_4px_rgba(192,57,43,0.1)]'
+                      : 'border-[#d6d3cb] focus-within:border-[#1f6f4e] focus-within:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]'
+                  }`}
+                >
                   <input
-                    value={groupName}
-                    onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="Otomatik olusturulacak"
+                    id="group-name"
+                    {...register('name')}
+                    placeholder="Orn: PRD · Checkout"
                     className="h-[42px] w-full rounded-[inherit] border-0 bg-transparent px-3.5 text-[15px] text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-[12px] text-[#9b2a2a]">{errors.name.message}</p>
+                )}
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-[#5c5a52]">
-                  Gereksinim basina senaryo
+                <label htmlFor="group-type" className="text-[13px] font-medium text-[#5c5a52]">
+                  Tip
                 </label>
-                <div className="inline-flex items-center rounded-[8px] border border-[#e8e1cf]">
-                  <button
-                    onClick={() => setCount((c) => Math.max(3, c - 1))}
-                    className="flex h-9 w-9 items-center justify-center rounded-l-[8px] bg-[#fbf8f1] text-[16px] text-[#5c5a52] hover:bg-[#f4efe3]"
-                  >
-                    −
-                  </button>
-                  <span className="flex h-9 w-12 items-center justify-center border-x border-[#e8e1cf] bg-white text-[14px] font-semibold text-[#1a1a18]">
-                    {count}
-                  </span>
-                  <button
-                    onClick={() => setCount((c) => Math.min(30, c + 1))}
-                    className="flex h-9 w-9 items-center justify-center rounded-r-[8px] bg-[#fbf8f1] text-[16px] text-[#5c5a52] hover:bg-[#f4efe3]"
-                  >
-                    +
-                  </button>
-                </div>
+                <select
+                  id="group-type"
+                  {...register('type')}
+                  className="h-[42px] w-full appearance-none rounded-[10px] border border-[#d6d3cb] bg-white px-3.5 text-[15px] text-[#1a1a18] shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] outline-none focus:border-[#1f6f4e] focus:shadow-[0_0_0_4px_rgba(31,111,78,0.15)]"
+                >
+                  {SCENARIO_GROUP_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {GROUP_TYPE_LABELS[t]}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
 
           <div className="rounded-[14px] border border-[#d4e9dd] bg-gradient-to-b from-[#ecf5f0] to-white p-5">
             <button
-              disabled={!file}
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1f6f4e] text-[16px] font-semibold text-[#fffdf8] shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-[#1a5a40] disabled:cursor-not-allowed disabled:opacity-55"
+              type="submit"
+              disabled={!file || generateMutation.isPending}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1f6f4e] text-[16px] font-semibold text-[#fffdf8] shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-[#1a5a40] active:translate-y-[0.5px] disabled:cursor-not-allowed disabled:opacity-55"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M8 2l1.5 3.5L13 7l-3 2.5.5 4L8 11.5 5.5 13.5l.5-4L3 7l3.5-1.5L8 2z"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              Senaryo uret
+              {generateMutation.isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Sparkles className="size-4" />
+              )}
+              {generateMutation.isPending ? 'Uretiliyor...' : 'Senaryo uret'}
             </button>
-            <div className="mt-3.5 flex items-center justify-between text-[12px] text-[#7a7868]">
-              <span>Tahmini sure</span>
-              <strong className="font-medium text-[#1a1a18]">~ 12 sn</strong>
-            </div>
+            <p className="mt-3 text-center text-[12px] text-[#7a7868]">
+              AI senaryolari uretir; kaydetmeden once inceleyebilirsin.
+            </p>
           </div>
         </aside>
       </div>
-    </div>
+    </form>
   );
 }

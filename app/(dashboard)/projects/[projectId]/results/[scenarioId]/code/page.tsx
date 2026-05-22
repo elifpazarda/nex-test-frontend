@@ -1,86 +1,19 @@
 'use client';
 
-import { useState, use } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { scenariosApi } from '@/lib/api/endpoints/scenarios';
+import type { TestFramework } from '@/types/scenario';
 
-const SCENARIO = {
-  id: 'TC-001',
-  title: 'Gecerli kart ile odeme basariyla tamamlanir',
-  category: 'happy_path',
-  priority: 'critical',
-  owner: 'Asli Cetin',
-  duration: '1.2 sn',
-  updated: '2 saat once',
-  steps: [
-    { kw: 'Given', text: 'kullanici sepetinde urun var ve odeme sayfasinda' },
-    { kw: 'When', text: 'gecerli bir kredi karti bilgisi girer' },
-    { kw: 'And', text: '"Ode" butonuna tiklar' },
-    { kw: 'Then', text: 'odeme basariyla tamamlanir ve onay sayfasi gosterilir' },
-  ],
-};
+const FRAMEWORKS: TestFramework[] = ['cucumber', 'playwright', 'cypress'];
 
-const CODE_OUTPUTS: Record<string, { lang: string; file: string; code: string }> = {
-  cucumber: {
-    lang: 'gherkin',
-    file: 'odeme-basarili.feature',
-    code: `Feature: Odeme Akisi
-  Kullanicilarin odeme yapabilmesi icin gerekli senaryolar.
-
-  Background:
-    Given kullanici sepetinde urun var ve odeme sayfasinda
-
-  Scenario: Gecerli kart ile odeme basariyla tamamlanir
-    When gecerli bir kredi karti bilgisi girer
-    And "Ode" butonuna tiklar
-    Then odeme basariyla tamamlanir ve onay sayfasi gosterilir`,
-  },
-  playwright: {
-    lang: 'typescript',
-    file: 'odeme-basarili.spec.ts',
-    code: `import { test, expect } from '@playwright/test';
-
-test.describe('Odeme Akisi', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/checkout');
-    await expect(page.locator('[data-testid="cart-items"]')).toBeVisible();
-  });
-
-  test('gecerli kart ile odeme basariyla tamamlanir', async ({ page }) => {
-    await page.fill('[data-testid="card-number"]', '4242424242424242');
-    await page.fill('[data-testid="card-expiry"]', '12/28');
-    await page.fill('[data-testid="card-cvc"]', '123');
-    await page.click('[data-testid="pay-button"]');
-    await expect(page).toHaveURL(/\\/confirmation/);
-    await expect(page.locator('.success-message')).toBeVisible();
-  });
-});`,
-  },
-  cypress: {
-    lang: 'javascript',
-    file: 'odeme-basarili.cy.js',
-    code: `describe('Odeme Akisi', () => {
-  beforeEach(() => {
-    cy.visit('/checkout');
-    cy.get('[data-testid="cart-items"]').should('be.visible');
-  });
-
-  it('gecerli kart ile odeme basariyla tamamlanir', () => {
-    cy.get('[data-testid="card-number"]').type('4242424242424242');
-    cy.get('[data-testid="card-expiry"]').type('12/28');
-    cy.get('[data-testid="card-cvc"]').type('123');
-    cy.get('[data-testid="pay-button"]').click();
-    cy.url().should('include', '/confirmation');
-    cy.get('.success-message').should('be.visible');
-  });
-});`,
-  },
-};
-
-const KW_COLORS: Record<string, string> = {
-  Given: '#1f5c87',
-  When: '#8a6b16',
-  Then: '#157449',
-  And: '#a8a595',
+const CATEGORY_LABELS: Record<string, string> = {
+  happy_path: 'Happy path',
+  edge_case: 'Edge case',
+  negative: 'Negative',
 };
 
 export default function CodePage({
@@ -88,17 +21,75 @@ export default function CodePage({
 }: {
   params: Promise<{ projectId: string; scenarioId: string }>;
 }) {
-  const { projectId: id } = use(params);
-  const [framework, setFramework] = useState<'cucumber' | 'playwright' | 'cypress'>('cucumber');
+  const { projectId, scenarioId } = use(params);
+  const [framework, setFramework] = useState<TestFramework>('cucumber');
   const [copied, setCopied] = useState(false);
 
-  const output = CODE_OUTPUTS[framework];
+  const { data: scenario, isLoading: scenarioLoading } = useQuery({
+    queryKey: ['scenario', scenarioId],
+    queryFn: () => scenariosApi.getById(scenarioId),
+    select: (res) => res.data.data,
+  });
+
+  // Secili framework icin BDD kodunu uretir (framework basina cache'lenir)
+  const {
+    data: bdd,
+    isFetching: bddLoading,
+    isError: bddError,
+  } = useQuery({
+    queryKey: ['bdd', scenarioId, framework],
+    queryFn: () =>
+      scenariosApi.convertToBdd({
+        projectId: scenario!.projectId,
+        framework,
+        scenarios: [
+          {
+            id: scenario!.id,
+            title: scenario!.title,
+            category: scenario!.category,
+            priority: scenario!.priority,
+            preconditions: scenario!.preconditions,
+            steps: scenario!.steps,
+            expectedResult: scenario!.expectedResult,
+          },
+        ],
+      }),
+    select: (res) => res.data.data.results[0],
+    enabled: !!scenario,
+    staleTime: Infinity,
+  });
 
   function copyCode() {
-    navigator.clipboard.writeText(output.code);
+    if (!bdd?.code) return;
+    navigator.clipboard.writeText(bdd.code);
     setCopied(true);
+    toast.success('Kod kopyalandi');
     setTimeout(() => setCopied(false), 2000);
   }
+
+  if (scenarioLoading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="size-6 animate-spin text-[#7a7868]" />
+      </div>
+    );
+  }
+
+  if (!scenario) {
+    return (
+      <div className="mx-auto max-w-[1240px] px-8 py-7">
+        <p className="text-[15px] text-[#5c5a52]">Senaryo bulunamadi.</p>
+        <Link
+          href={`/projects/${projectId}`}
+          className="mt-3 inline-block text-[14px] font-medium text-[#1f6f4e] hover:underline"
+        >
+          ← Projeye don
+        </Link>
+      </div>
+    );
+  }
+
+  const resultsHref = `/projects/${projectId}/results?groupId=${scenario.groupId}`;
 
   return (
     <div className="mx-auto max-w-[1240px] px-8 py-7 pb-16">
@@ -108,98 +99,73 @@ export default function CodePage({
           Projeler
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <Link href={`/projects/${id}`} className="text-[#7a7868] no-underline hover:text-[#1a1a18]">
-          Trendyol Checkout
-        </Link>
-        <span className="text-[#a8a595]">/</span>
         <Link
-          href={`/projects/${id}/results`}
+          href={`/projects/${projectId}`}
           className="text-[#7a7868] no-underline hover:text-[#1a1a18]"
         >
-          Sonuclar
+          {scenario.project?.name ?? 'Proje'}
+        </Link>
+        <span className="text-[#a8a595]">/</span>
+        <Link href={resultsHref} className="text-[#7a7868] no-underline hover:text-[#1a1a18]">
+          {scenario.group?.name ?? 'Senaryolar'}
         </Link>
         <span className="text-[#a8a595]">/</span>
         <span className="font-medium text-[#1a1a18]">Kod</span>
       </nav>
 
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <div className="mb-1.5 flex items-center gap-2 text-[12px] text-[#a8a595]">
-            <span className="rounded bg-[#f4efe3] px-1.5 py-0.5 font-mono text-[10px] font-medium text-[#5c5a52]">
-              {SCENARIO.id}
+            <span className="text-[#157449]">
+              {CATEGORY_LABELS[scenario.category] ?? scenario.category}
             </span>
             <span>·</span>
-            <span className="text-[#157449]">{SCENARIO.category.replace('_', ' ')}</span>
-            <span>·</span>
-            <span className="rounded-[4px] bg-[#9b2a2a] px-2 py-0.5 text-[11px] font-medium text-white">
-              {SCENARIO.priority}
-            </span>
+            <span>oncelik: {scenario.priority}</span>
           </div>
           <h1 className="text-[22px] font-semibold tracking-tight text-[#1a1a18]">
-            {SCENARIO.title}
+            {scenario.title}
           </h1>
-          <div className="mt-2 flex items-center gap-4 text-[12px] text-[#7a7868]">
-            <span>{SCENARIO.owner}</span>
-            <span>·</span>
-            <span>{SCENARIO.duration}</span>
-            <span>·</span>
-            <span>{SCENARIO.updated}</span>
-          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/projects/${id}/results`}
-            className="inline-flex h-8 items-center rounded-[6px] border border-[#d6d3cb] bg-white px-3 text-[12px] font-medium text-[#1a1a18] no-underline shadow-[0_1px_2px_rgba(26,26,24,0.05)] hover:bg-[#fbf8f1]"
-          >
-            ← Geri
-          </Link>
-          <button className="inline-flex h-8 items-center rounded-[6px] border border-[#d6d3cb] bg-white px-3 text-[12px] font-medium text-[#1a1a18] shadow-[0_1px_2px_rgba(26,26,24,0.05)] hover:bg-[#fbf8f1]">
-            Yeniden uret
-          </button>
-        </div>
+        <Link
+          href={resultsHref}
+          className="inline-flex h-8 flex-shrink-0 items-center rounded-[6px] border border-[#d6d3cb] bg-white px-3 text-[12px] font-medium text-[#1a1a18] no-underline shadow-[0_1px_2px_rgba(26,26,24,0.05)] hover:bg-[#fbf8f1]"
+        >
+          ← Geri
+        </Link>
       </div>
 
       {/* Two-column: Sidebar + Code */}
       <div className="grid grid-cols-[280px_1fr] gap-6">
         {/* Sidebar */}
         <aside className="flex flex-col gap-4">
-          {/* Steps card */}
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-4">
             <h3 className="mb-3 text-[13px] font-semibold text-[#1a1a18]">Senaryo adimlari</h3>
-            <div className="flex flex-col gap-1.5">
-              {SCENARIO.steps.map((step, i) => (
-                <div key={i} className="flex items-baseline gap-2 text-[12px]">
-                  <span
-                    className="font-mono font-medium"
-                    style={{ color: KW_COLORS[step.kw], minWidth: '44px' }}
-                  >
-                    {step.kw}
-                  </span>
-                  <span className="text-[#3f3d38]">{step.text}</span>
-                </div>
+            <ol className="flex flex-col gap-1.5">
+              {scenario.steps.map((step, i) => (
+                <li key={i} className="flex gap-2 text-[12px] text-[#3f3d38]">
+                  <span className="text-[#a8a595]">{i + 1}.</span>
+                  <span>{step}</span>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
-          {/* Details card */}
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-4">
             <h3 className="mb-3 text-[13px] font-semibold text-[#1a1a18]">Detaylar</h3>
             <div className="flex flex-col gap-2 text-[12px]">
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
                 <span className="text-[#7a7868]">Kategori</span>
-                <span className="font-medium text-[#1a1a18]">{SCENARIO.category}</span>
+                <span className="font-medium text-[#1a1a18]">{scenario.category}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
                 <span className="text-[#7a7868]">Oncelik</span>
-                <span className="font-medium text-[#1a1a18]">{SCENARIO.priority}</span>
+                <span className="font-medium text-[#1a1a18]">{scenario.priority}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
                 <span className="text-[#7a7868]">Kaynak</span>
-                <span className="font-mono font-medium text-[#1a1a18]">text</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#7a7868]">Uretim sayisi</span>
-                <span className="font-medium text-[#1a1a18]">1</span>
+                <span className="font-mono font-medium text-[#1a1a18]">
+                  {scenario.sourceType ?? '—'}
+                </span>
               </div>
             </div>
           </div>
@@ -210,9 +176,10 @@ export default function CodePage({
           {/* Tabs */}
           <div className="flex items-center justify-between border-b border-[#3f3d38] bg-[#1a1a18] px-4 py-2.5">
             <div className="flex items-center gap-1">
-              {(['cucumber', 'playwright', 'cypress'] as const).map((fw) => (
+              {FRAMEWORKS.map((fw) => (
                 <button
                   key={fw}
+                  type="button"
                   onClick={() => setFramework(fw)}
                   data-active={framework === fw || undefined}
                   className="rounded-[6px] px-3 py-1.5 text-[12px] font-medium capitalize text-[#a8a595] hover:text-[#e8e1cf] data-[active]:bg-[#3f3d38] data-[active]:text-white"
@@ -221,20 +188,35 @@ export default function CodePage({
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[11px] text-[#7a7868]">{output.file}</span>
-              <button
-                onClick={copyCode}
-                className="rounded-[4px] px-2 py-1 text-[11px] font-medium text-[#a8a595] hover:bg-[#3f3d38] hover:text-white"
-              >
-                {copied ? '✓ Kopyalandi' : 'Kopyala'}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={copyCode}
+              disabled={!bdd?.code}
+              className="rounded-[4px] px-2 py-1 text-[11px] font-medium text-[#a8a595] hover:bg-[#3f3d38] hover:text-white disabled:opacity-40"
+            >
+              {copied ? '✓ Kopyalandi' : 'Kopyala'}
+            </button>
           </div>
           {/* Code */}
-          <pre className="overflow-x-auto bg-[#1a1a18] p-5 font-mono text-[13px] leading-[1.7] text-[#e4e4e7]">
-            <code>{output.code}</code>
-          </pre>
+          <div className="min-h-[320px] bg-[#1a1a18]">
+            {bddLoading && (
+              <div className="flex items-center justify-center gap-2 py-32 text-[13px] text-[#a8a595]">
+                <Loader2 className="size-4 animate-spin" />
+                {framework} kodu uretiliyor...
+              </div>
+            )}
+            {bddError && !bddLoading && (
+              <div className="flex flex-col items-center justify-center gap-2 py-32 text-[13px] text-[#d99b94]">
+                <AlertCircle className="size-5" />
+                Kod uretilemedi. Lutfen tekrar deneyin.
+              </div>
+            )}
+            {!bddLoading && !bddError && bdd && (
+              <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-[1.7] text-[#e4e4e7]">
+                <code>{bdd.code}</code>
+              </pre>
+            )}
+          </div>
         </div>
       </div>
     </div>

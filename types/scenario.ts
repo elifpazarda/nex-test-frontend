@@ -101,3 +101,22 @@ export interface ConvertBddResponse {
   framework: TestFramework;
   results: BddResult[];
 }
+
+/** Single row outcome of POST /scenarios/import-excel */
+export interface ImportExcelResultItem {
+  rowNumber: number;
+  issueKey: string;
+  testSummary: string;
+  input: string;
+  bddOutput: string;
+  savedId?: string;
+  error?: string;
+}
+
+/** POST /scenarios/import-excel → data field */
+export interface ImportExcelResult {
+  totalRows: number;
+  successCount: number;
+  failureCount: number;
+  results: ImportExcelResultItem[];
+}

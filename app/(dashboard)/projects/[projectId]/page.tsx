@@ -188,9 +188,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
                 <span>Guncellendi</span>
               </div>
               {groups.map((g) => (
-                <div
+                <Link
                   key={g.id}
-                  className="grid grid-cols-[2fr_120px_90px_130px] items-center gap-3 border-b border-secondary px-4 py-3 transition-colors last:border-0 hover:bg-muted"
+                  href={`/projects/${projectId}/results?groupId=${g.id}`}
+                  className="grid grid-cols-[2fr_120px_90px_130px] items-center gap-3 border-b border-secondary px-4 py-3 no-underline transition-colors last:border-0 hover:bg-muted"
                 >
                   <div className="min-w-0">
                     <h3 className="truncate text-[14px] font-medium text-foreground">{g.name}</h3>
@@ -212,7 +213,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
                   <span className="text-[12px] text-[var(--palette-neutral-400)]">
                     {timeAgo(g.updatedAt)}
                   </span>
-                </div>
+                </Link>
               ))}
             </div>
           )}
