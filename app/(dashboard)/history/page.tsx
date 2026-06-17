@@ -4,14 +4,14 @@ import { useState } from 'react';
 
 const HISTORY_DATA = [
   {
-    day: 'Bugun',
+    day: 'Bugün',
     date: '10 May 2026',
     runs: 3,
     scenarios: 24,
     items: [
       {
         id: 'h1',
-        title: 'Sepet · Odeme — Q2 PRD',
+        title: 'Sepet · Ödeme — Q2 PRD',
         project: 'Trendyol Checkout',
         source: 'text',
         duration: '4.2 sn',
@@ -45,14 +45,14 @@ const HISTORY_DATA = [
     ],
   },
   {
-    day: 'Dun',
+    day: 'Dün',
     date: '9 May 2026',
     runs: 2,
     scenarios: 18,
     items: [
       {
         id: 'h4',
-        title: 'Uyelik akisi negatif testler',
+        title: 'Üyelik akışı negatif testler',
         project: 'Trendyol Checkout',
         source: 'text',
         duration: '5.5 sn',
@@ -75,7 +75,7 @@ const HISTORY_DATA = [
     ],
   },
   {
-    day: 'Onceki',
+    day: 'Önceki',
     date: '7 May 2026',
     runs: 1,
     scenarios: 6,
@@ -117,20 +117,20 @@ export default function HistoryPage() {
       {/* Hero */}
       <div className="mb-8">
         <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-          <em className="font-medium italic text-[#1a5a40]">Gecmis</em> tum uretimler
+          <em className="font-medium italic text-[#1a5a40]">Geçmiş</em> tüm üretimler
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Tum AI uretim gecmisini buradan takip edebilirsin.
+          Tüm AI üretim geçmişini buradan takip edebilirsin.
         </p>
       </div>
 
       {/* Stats */}
       <div className="mb-8 grid grid-cols-4 gap-px overflow-hidden rounded-[14px] border border-[#e8e1cf] bg-[#e8e1cf]">
         {[
-          { label: 'Bu hafta uretilen', value: '48', delta: '+23% gecen haftaya gore' },
-          { label: 'Onay orani', value: '%87', delta: '42 / 48 senaryo korundu' },
-          { label: 'Bugun', value: '24', delta: '3 calistirma · ort. 4.4 sn' },
-          { label: 'Basari orani', value: '%94', delta: '45 basarili / 48 toplam' },
+          { label: 'Bu hafta üretilen', value: '48', delta: '+23% geçen haftaya göre' },
+          { label: 'Onay oranı', value: '%87', delta: '42 / 48 senaryo korundu' },
+          { label: 'Bugün', value: '24', delta: '3 çalıştırma · ort. 4.4 sn' },
+          { label: 'Başarı oranı', value: '%94', delta: '45 başarılı / 48 toplam' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white p-5">
             <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-[#a8a595]">
@@ -159,13 +159,13 @@ export default function HistoryPage() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Gecmiste ara..."
+            placeholder="Geçmişte ara..."
             className="h-full flex-1 border-0 bg-transparent text-[13px] text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
           />
         </label>
         <div className="flex items-center gap-1">
           {[
-            { id: null, label: 'Tumu' },
+            { id: null, label: 'Tümü' },
             { id: 'text', label: 'Metin' },
             { id: 'jira', label: 'Jira' },
             { id: 'excel', label: 'Excel' },
@@ -201,7 +201,7 @@ export default function HistoryPage() {
                 </h2>
                 <span className="text-[12px] text-[#a8a595]">{day.date}</span>
                 <span className="text-[12px] text-[#a8a595]">
-                  · {day.runs} calistirma · {day.scenarios} senaryo
+                  · {day.runs} çalıştırma · {day.scenarios} senaryo
                 </span>
               </div>
               {/* Rows */}
@@ -247,9 +247,9 @@ export default function HistoryPage() {
                       }}
                     >
                       {item.status === 'ok'
-                        ? 'Basarili'
+                        ? 'Başarılı'
                         : item.status === 'warn'
-                          ? 'Uyari'
+                          ? 'Uyarı'
                           : 'Hata'}
                     </span>
                     {/* Time */}

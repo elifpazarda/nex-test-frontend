@@ -28,7 +28,7 @@ export function Header() {
             <span className="hidden text-sm font-medium text-muted-foreground sm:inline">
               {user.name}
             </span>
-            <Button variant="ghost" size="icon" aria-label="Cikis yap" onClick={logout}>
+            <Button variant="ghost" size="icon" aria-label="Çıkış yap" onClick={logout}>
               <LogOut className="h-4 w-4" />
             </Button>
           </>

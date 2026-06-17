@@ -13,14 +13,14 @@ export function ThemeToggle() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <Button variant="ghost" size="icon" aria-label="Tema degistir" disabled />;
+    return <Button variant="ghost" size="icon" aria-label="Tema değiştir" disabled />;
   }
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label="Tema degistir"
+      aria-label="Tema değiştir"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
       {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

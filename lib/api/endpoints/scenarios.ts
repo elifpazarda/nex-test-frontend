@@ -19,6 +19,12 @@ interface ExportOptions {
   xrayFormat?: boolean;
 }
 
+/**
+ * AI uretim/donusum istekleri 15sn'lik global timeout'tan cok daha uzun
+ * surebilir; bu uclar icin istek bazinda 5 dakikalik timeout kullanilir.
+ */
+const AI_TIMEOUT = 300_000;
+
 export const scenariosApi = {
   // --- List & Detail ---
   listByGroup: (groupId: string, page = 1, limit = 20) =>
@@ -32,10 +38,14 @@ export const scenariosApi = {
 
   // --- AI Generation (does NOT save) ---
   generateFromText: (data: GenerateTextRequest) =>
-    apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/text', data),
+    apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/text', data, {
+      timeout: AI_TIMEOUT,
+    }),
 
   generateFromJira: (data: GenerateJiraRequest) =>
-    apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/jira', data),
+    apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/jira', data, {
+      timeout: AI_TIMEOUT,
+    }),
 
   generateFromExcel: (projectId: string, file: File) => {
     const formData = new FormData();
@@ -43,6 +53,7 @@ export const scenariosApi = {
     formData.append('file', file);
     return apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/excel', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: AI_TIMEOUT,
     });
   },
 
@@ -52,12 +63,15 @@ export const scenariosApi = {
     formData.append('file', file);
     return apiClient.post<ApiResponse<GenerateResponse>>('/scenarios/generate/pdf', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: AI_TIMEOUT,
     });
   },
 
   // --- BDD Conversion ---
   convertToBdd: (data: ConvertBddRequest) =>
-    apiClient.post<ApiResponse<ConvertBddResponse>>('/scenarios/convert-bdd', data),
+    apiClient.post<ApiResponse<ConvertBddResponse>>('/scenarios/convert-bdd', data, {
+      timeout: AI_TIMEOUT,
+    }),
 
   // --- Save ---
   save: (data: SaveScenariosRequest) =>
@@ -71,6 +85,7 @@ export const scenariosApi = {
     formData.append('saveResults', String(saveResults));
     return apiClient.post<ApiResponse<ImportExcelResult>>('/scenarios/import-excel', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: AI_TIMEOUT,
     });
   },
 

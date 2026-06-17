@@ -26,7 +26,7 @@ const GROUP_TYPE_LABELS: Record<string, string> = {
   INTEGRATION: 'Integration',
   E2E: 'E2E',
   PERFORMANCE: 'Performance',
-  OTHER: 'Diger',
+  OTHER: 'Diğer',
 };
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -59,11 +59,11 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
   function pickFile(f: File | null) {
     if (!f) return;
     if (!f.name.toLowerCase().endsWith('.xlsx')) {
-      toast.error('Gecersiz dosya', { description: 'Yalnizca .xlsx dosyalari kabul edilir.' });
+      toast.error('Geçersiz dosya', { description: 'Yalnızca .xlsx dosyaları kabul edilir.' });
       return;
     }
     if (f.size > MAX_SIZE) {
-      toast.error('Dosya cok buyuk', { description: 'Excel dosyasi en fazla 5MB olabilir.' });
+      toast.error('Dosya çok büyük', { description: 'Excel dosyası en fazla 5MB olabilir.' });
       return;
     }
     setFile(f);
@@ -77,8 +77,8 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onError: (error) => {
-      toast.error('Senaryo uretilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('Senaryo üretilemedi', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -115,7 +115,7 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
     },
     onError: (error) => {
       toast.error('Kaydedilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -123,7 +123,7 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
 
   const onGenerate = form.handleSubmit(() => {
     if (!file) {
-      toast.error('Dosya secilmedi', { description: 'Once bir .xlsx dosyasi yukleyin.' });
+      toast.error('Dosya seçilmedi', { description: 'Önce bir .xlsx dosyası yükleyin.' });
       return;
     }
     generateMutation.mutate();
@@ -164,16 +164,16 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
           {project?.name ?? 'Proje'}
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <span className="font-medium text-[#1a1a18]">Excel&apos;den uret</span>
+        <span className="font-medium text-[#1a1a18]">Excel&apos;den üret</span>
       </nav>
 
       {/* Hero */}
       <div className="mb-6">
         <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-          <em className="font-medium italic text-[#1a5a40]">Excel</em>&apos;den uret
+          <em className="font-medium italic text-[#1a5a40]">Excel</em>&apos;den üret
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Test case&apos;lerini iceren bir .xlsx dosyasi yukle, AI senaryolari uretsin.
+          Test case&apos;lerini içeren bir .xlsx dosyası yükle, AI senaryoları üretsin.
         </p>
       </div>
 
@@ -190,9 +190,9 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
                 <FileSpreadsheet className="size-[22px]" />
               </span>
               <div>
-                <p className="text-[14px] font-semibold text-[#1a1a18]">Excel dosyasi yukle</p>
+                <p className="text-[14px] font-semibold text-[#1a1a18]">Excel dosyası yükle</p>
                 <p className="mt-1 text-[12px] text-[#7a7868]">
-                  Surukle birak veya tikla · .xlsx · Maks 5MB
+                  Sürükle bırak veya tıkla · .xlsx · Maks 5MB
                 </p>
               </div>
               <input
@@ -217,14 +217,14 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
                   onClick={() => setFile(null)}
                   disabled={generateMutation.isPending}
                   className="rounded-[6px] p-1.5 text-[#5c5a52] hover:bg-[#f4efe3] disabled:opacity-50"
-                  aria-label="Dosyayi kaldir"
+                  aria-label="Dosyayı kaldır"
                 >
                   <X className="size-4" />
                 </button>
               </div>
               <p className="mt-4 rounded-[10px] bg-[#fbf8f1] px-3.5 py-3 text-[12px] text-[#7a7868]">
-                Dosya yuklendi. <strong className="text-[#1a1a18]">Senaryo uret</strong>{' '}
-                butonuna basildiginda Excel icerigi AI ile islenecek.
+                Dosya yüklendi. <strong className="text-[#1a1a18]">Senaryo üret</strong>{' '}
+                butonuna basıldığında Excel içeriği AI ile işlenecek.
               </p>
             </div>
           )}
@@ -234,12 +234,12 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
         <aside className="sticky top-[88px] flex flex-col gap-4 self-start">
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white">
             <div className="border-b border-[#f4efe3] px-[22px] py-3.5">
-              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarlari</h3>
+              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarları</h3>
             </div>
             <div className="flex flex-col gap-4 p-[18px_22px]">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="group-name" className="text-[13px] font-medium text-[#5c5a52]">
-                  Grup adi
+                  Grup adı
                 </label>
                 <div
                   className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] ${
@@ -251,7 +251,7 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
                   <input
                     id="group-name"
                     {...register('name')}
-                    placeholder="Orn: Excel · Regression"
+                    placeholder="Örn: Excel · Regression"
                     className="h-[42px] w-full rounded-[inherit] border-0 bg-transparent px-3.5 text-[15px] text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
                   />
                 </div>
@@ -289,10 +289,10 @@ export default function GenerateExcelPage({ params }: { params: Promise<{ projec
               ) : (
                 <Sparkles className="size-4" />
               )}
-              {generateMutation.isPending ? 'Uretiliyor...' : 'Senaryo uret'}
+              {generateMutation.isPending ? 'Üretiliyor...' : 'Senaryo üret'}
             </button>
             <p className="mt-3 text-center text-[12px] text-[#7a7868]">
-              AI senaryolari uretir; kaydetmeden once inceleyebilirsin.
+              AI senaryoları üretir; kaydetmeden önce inceleyebilirsin.
             </p>
           </div>
         </aside>

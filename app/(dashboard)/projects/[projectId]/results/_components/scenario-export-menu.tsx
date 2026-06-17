@@ -41,11 +41,11 @@ export function ScenarioExportMenu({
     mutationFn: (format: ExportFormat) => scenariosApi.exportSingle(scenarioId, format),
     onSuccess: (res, format) => {
       downloadBlobResponse(res, `${slugify(title)}.${FORMAT_EXTENSION[format]}`);
-      toast.success('Senaryo disa aktarildi');
+      toast.success('Senaryo dışa aktarıldı');
     },
     onError: () => {
-      toast.error('Disa aktarilamadi', {
-        description: 'Lutfen tekrar deneyin.',
+      toast.error('Dışa aktarılamadı', {
+        description: 'Lütfen tekrar deneyin.',
         duration: 4000,
       });
     },
@@ -64,7 +64,7 @@ export function ScenarioExportMenu({
           ) : (
             <Download className="size-3" />
           )}
-          Disa aktar
+          Dışa aktar
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">

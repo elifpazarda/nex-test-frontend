@@ -39,9 +39,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const PRIORITY_LABELS: Record<string, string> = {
   critical: 'Kritik',
-  high: 'Yuksek',
+  high: 'Yüksek',
   medium: 'Orta',
-  low: 'Dusuk',
+  low: 'Düşük',
 };
 
 /** AxiosError'dan kullaniciya gosterilecek mesaji cikar */
@@ -95,7 +95,7 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
     },
     onError: (error) => {
       toast.error('Senaryo silinemedi', {
-        description: getErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        description: getErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -107,14 +107,14 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
       <div className="mx-auto max-w-[1240px] px-8 py-7">
         <EmptyState
           icon={FolderOpen}
-          title="Senaryo grubu secilmedi"
-          description="Senaryolari gormek icin proje sayfasindan bir senaryo grubu secin."
+          title="Senaryo grubu seçilmedi"
+          description="Senaryoları görmek için proje sayfasından bir senaryo grubu seçin."
           action={
             <Link
               href={`/projects/${projectId}`}
               className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-[13px] font-semibold text-primary-foreground no-underline hover:bg-[var(--palette-brand-700)]"
             >
-              Projeye don
+              Projeye dön
             </Link>
           }
         />
@@ -164,7 +164,7 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
             )}
           </div>
           <p className="mt-1 text-[15px] text-[#5c5a52]">
-            Bu grupta <strong>{list.length}</strong> kayitli senaryo var.
+            Bu grupta <strong>{list.length}</strong> kayıtlı senaryo var.
           </p>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
@@ -183,7 +183,7 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
             className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[#1f6f4e] px-3.5 text-[13px] font-semibold text-[#fffdf8] shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4)] hover:bg-[#1a5a40] disabled:cursor-not-allowed disabled:opacity-55"
           >
             <Download className="size-4" />
-            Disa aktar
+            Dışa aktar
           </button>
         </div>
       </div>
@@ -192,8 +192,8 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
       {list.length === 0 && (
         <EmptyState
           icon={FolderOpen}
-          title="Bu grupta henuz senaryo yok"
-          description="Senaryolar bu gruba kaydedildikten sonra burada gorunur."
+          title="Bu grupta henüz senaryo yok"
+          description="Senaryolar bu gruba kaydedildikten sonra burada görünür."
         />
       )}
 
@@ -234,14 +234,14 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
               {s.preconditions && (
                 <div>
                   <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                    On kosul
+                    Ön koşul
                   </span>
                   <p className="mt-0.5 text-[#5c5a52]">{s.preconditions}</p>
                 </div>
               )}
               <div>
                 <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                  Adimlar
+                  Adımlar
                 </span>
                 <ol className="mt-1 flex flex-col gap-1">
                   {s.steps.map((step, idx) => (
@@ -254,7 +254,7 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
               </div>
               <div>
                 <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                  Beklenen sonuc
+                  Beklenen sonuç
                 </span>
                 <p className="mt-0.5 text-[#1a1a18]">{s.expectedResult}</p>
               </div>
@@ -287,7 +287,7 @@ export default function ResultsPage({ params }: { params: Promise<{ projectId: s
         title="Senaryoyu sil"
         description={
           deleteTarget
-            ? `"${deleteTarget.title}" senaryosu kalici olarak silinecek. Bu islem geri alinamaz.`
+            ? `"${deleteTarget.title}" senaryosu kalıcı olarak silinecek. Bu işlem geri alınamaz.`
             : ''
         }
         confirmLabel="Sil"

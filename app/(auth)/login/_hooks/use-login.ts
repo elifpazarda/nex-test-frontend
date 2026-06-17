@@ -31,13 +31,13 @@ export function useLogin() {
       router.push(callbackUrl);
     },
     onError: (error: Error) => {
-      let message = 'Giris yapilamadi. Lutfen tekrar deneyin.';
+      let message = 'Giriş yapılamadı. Lütfen tekrar deneyin.';
       if (error instanceof AxiosError && error.response?.data) {
         const body = error.response.data as ApiErrorResponse;
         const msg = body.error?.message;
         message = Array.isArray(msg) ? msg.join(', ') : msg || message;
       }
-      toast.error('Giris basarisiz', { description: message, duration: 4000 });
+      toast.error('Giriş başarısız', { description: message, duration: 4000 });
     },
   });
 

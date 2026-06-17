@@ -5,21 +5,26 @@ import { SCENARIO_GROUP_TYPES } from '@/types/scenario-group';
 export const scenarioGroupSchema = z.object({
   name: z
     .string()
-    .min(2, 'Grup adi en az 2 karakter olmali')
-    .max(100, 'Grup adi en fazla 100 karakter olmali'),
+    .min(2, 'Grup adı en az 2 karakter olmalı')
+    .max(100, 'Grup adı en fazla 100 karakter olmalı'),
   type: z.enum(SCENARIO_GROUP_TYPES, {
-    message: 'Gecerli bir grup tipi secin',
+    message: 'Geçerli bir grup tipi seçin',
   }),
 });
 
 export type ScenarioGroupFormData = z.infer<typeof scenarioGroupSchema>;
 
+/** Senaryo grubu güncelleme — backend ile aynı kurallar */
+export const updateScenarioGroupSchema = scenarioGroupSchema;
+
+export type UpdateScenarioGroupFormData = z.infer<typeof updateScenarioGroupSchema>;
+
 /** Metinden senaryo uretimi — backend: input 10-2000 karakter */
 export const generateTextSchema = scenarioGroupSchema.extend({
   input: z
     .string()
-    .min(10, 'Aciklama en az 10 karakter olmali')
-    .max(2000, 'Aciklama en fazla 2000 karakter olmali'),
+    .min(10, 'Açıklama en az 10 karakter olmalı')
+    .max(2000, 'Açıklama en fazla 2000 karakter olmalı'),
 });
 
 export type GenerateTextFormData = z.infer<typeof generateTextSchema>;
@@ -27,7 +32,7 @@ export type GenerateTextFormData = z.infer<typeof generateTextSchema>;
 /** Jira issue key — orn: PROJ-123 */
 export const jiraIssueKeySchema = z
   .string()
-  .regex(/^[A-Z][A-Z0-9]+-\d+$/, 'Gecersiz Jira issue key formati (orn: PROJ-123)');
+  .regex(/^[A-Z][A-Z0-9]+-\d+$/, 'Geçersiz Jira issue key formatı (örn: PROJ-123)');
 
 /** Jira'dan senaryo uretimi — grup bilgisi + issue key */
 export const generateJiraSchema = scenarioGroupSchema.extend({

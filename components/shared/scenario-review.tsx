@@ -10,9 +10,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const PRIORITY_LABELS: Record<string, string> = {
   critical: 'Kritik',
-  high: 'Yuksek',
+  high: 'Yüksek',
   medium: 'Orta',
-  low: 'Dusuk',
+  low: 'Düşük',
 };
 
 interface ScenarioReviewProps {
@@ -49,15 +49,15 @@ export function ScenarioReview({
           {projectName}
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <span className="font-medium text-[#1a1a18]">Senaryolari incele</span>
+        <span className="font-medium text-[#1a1a18]">Senaryoları incele</span>
       </nav>
 
       <div className="mb-6">
         <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-          <em className="font-medium italic text-[#1a5a40]">{scenarios.length}</em> senaryo uretildi
+          <em className="font-medium italic text-[#1a5a40]">{scenarios.length}</em> senaryo üretildi
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Inceleyin; uygunsa <strong>{groupName}</strong> grubu olarak kaydedin.
+          İnceleyin; uygunsa <strong>{groupName}</strong> grubu olarak kaydedin.
         </p>
       </div>
 
@@ -85,14 +85,14 @@ export function ScenarioReview({
               {s.preconditions && (
                 <div>
                   <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                    On kosul
+                    Ön koşul
                   </span>
                   <p className="mt-0.5 text-[#5c5a52]">{s.preconditions}</p>
                 </div>
               )}
               <div>
                 <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                  Adimlar
+                  Adımlar
                 </span>
                 <ol className="mt-1 flex flex-col gap-1">
                   {s.steps.map((step, idx) => (
@@ -105,7 +105,7 @@ export function ScenarioReview({
               </div>
               <div>
                 <span className="text-[12px] font-medium uppercase tracking-[0.04em] text-[#a8a595]">
-                  Beklenen sonuc
+                  Beklenen sonuç
                 </span>
                 <p className="mt-0.5 text-[#1a1a18]">{s.expectedResult}</p>
               </div>
@@ -123,7 +123,7 @@ export function ScenarioReview({
           className="inline-flex items-center gap-1.5 rounded-[8px] px-3 py-2 text-[13px] font-medium text-[#5c5a52] hover:bg-[#f4efe3] disabled:opacity-50"
         >
           <ArrowLeft className="size-4" />
-          Forma don
+          Forma dön
         </button>
         <button
           type="button"

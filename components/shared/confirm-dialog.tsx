@@ -28,7 +28,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel = 'Onayla',
-  cancelLabel = 'Iptal',
+  cancelLabel = 'İptal',
   variant = 'default',
   isLoading = false,
   onConfirm,
@@ -49,7 +49,7 @@ export function ConfirmDialog({
             onClick={onConfirm}
             disabled={isLoading}
           >
-            {isLoading ? 'Yukleniyor...' : confirmLabel}
+            {isLoading ? 'Yükleniyor...' : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

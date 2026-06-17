@@ -63,7 +63,7 @@ export default function CodePage({
     if (!bdd?.code) return;
     navigator.clipboard.writeText(bdd.code);
     setCopied(true);
-    toast.success('Kod kopyalandi');
+    toast.success('Kod kopyalandı');
     setTimeout(() => setCopied(false), 2000);
   }
 
@@ -78,12 +78,12 @@ export default function CodePage({
   if (!scenario) {
     return (
       <div className="mx-auto max-w-[1240px] px-8 py-7">
-        <p className="text-[15px] text-[#5c5a52]">Senaryo bulunamadi.</p>
+        <p className="text-[15px] text-[#5c5a52]">Senaryo bulunamadı.</p>
         <Link
           href={`/projects/${projectId}`}
           className="mt-3 inline-block text-[14px] font-medium text-[#1f6f4e] hover:underline"
         >
-          ← Projeye don
+          ← Projeye dön
         </Link>
       </div>
     );
@@ -121,7 +121,7 @@ export default function CodePage({
               {CATEGORY_LABELS[scenario.category] ?? scenario.category}
             </span>
             <span>·</span>
-            <span>oncelik: {scenario.priority}</span>
+            <span>öncelik: {scenario.priority}</span>
           </div>
           <h1 className="text-[22px] font-semibold tracking-tight text-[#1a1a18]">
             {scenario.title}
@@ -140,7 +140,7 @@ export default function CodePage({
         {/* Sidebar */}
         <aside className="flex flex-col gap-4">
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white p-4">
-            <h3 className="mb-3 text-[13px] font-semibold text-[#1a1a18]">Senaryo adimlari</h3>
+            <h3 className="mb-3 text-[13px] font-semibold text-[#1a1a18]">Senaryo adımları</h3>
             <ol className="flex flex-col gap-1.5">
               {scenario.steps.map((step, i) => (
                 <li key={i} className="flex gap-2 text-[12px] text-[#3f3d38]">
@@ -158,7 +158,7 @@ export default function CodePage({
                 <span className="font-medium text-[#1a1a18]">{scenario.category}</span>
               </div>
               <div className="flex justify-between gap-3">
-                <span className="text-[#7a7868]">Oncelik</span>
+                <span className="text-[#7a7868]">Öncelik</span>
                 <span className="font-medium text-[#1a1a18]">{scenario.priority}</span>
               </div>
               <div className="flex justify-between gap-3">
@@ -194,7 +194,7 @@ export default function CodePage({
               disabled={!bdd?.code}
               className="rounded-[4px] px-2 py-1 text-[11px] font-medium text-[#a8a595] hover:bg-[#3f3d38] hover:text-white disabled:opacity-40"
             >
-              {copied ? '✓ Kopyalandi' : 'Kopyala'}
+              {copied ? '✓ Kopyalandı' : 'Kopyala'}
             </button>
           </div>
           {/* Code */}
@@ -202,13 +202,13 @@ export default function CodePage({
             {bddLoading && (
               <div className="flex items-center justify-center gap-2 py-32 text-[13px] text-[#a8a595]">
                 <Loader2 className="size-4 animate-spin" />
-                {framework} kodu uretiliyor...
+                {framework} kodu üretiliyor...
               </div>
             )}
             {bddError && !bddLoading && (
               <div className="flex flex-col items-center justify-center gap-2 py-32 text-[13px] text-[#d99b94]">
                 <AlertCircle className="size-5" />
-                Kod uretilemedi. Lutfen tekrar deneyin.
+                Kod üretilemedi. Lütfen tekrar deneyin.
               </div>
             )}
             {!bddLoading && !bddError && bdd && (

@@ -46,11 +46,11 @@ export function ImportExcelDialog({
   function pickFile(f: File | null) {
     if (!f) return;
     if (!f.name.toLowerCase().endsWith('.xlsx')) {
-      toast.error('Gecersiz dosya', { description: 'Yalnizca .xlsx dosyalari kabul edilir.' });
+      toast.error('Geçersiz dosya', { description: 'Yalnızca .xlsx dosyaları kabul edilir.' });
       return;
     }
     if (f.size > MAX_SIZE) {
-      toast.error('Dosya cok buyuk', { description: 'Excel dosyasi en fazla 5MB olabilir.' });
+      toast.error('Dosya çok büyük', { description: 'Excel dosyası en fazla 5MB olabilir.' });
       return;
     }
     setFile(f);
@@ -63,12 +63,12 @@ export function ImportExcelDialog({
       setResult(data);
       if (saveResults && data.successCount > 0) {
         onImported();
-        toast.success(`${data.successCount} senaryo iceri aktarildi`);
+        toast.success(`${data.successCount} senaryo içeri aktarıldı`);
       }
     },
     onError: (error) => {
-      toast.error('Iceri aktarilamadi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('İçeri aktarılamadı', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -83,9 +83,9 @@ export function ImportExcelDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Excel&apos;den iceri aktar</DialogTitle>
+          <DialogTitle>Excel&apos;den içeri aktar</DialogTitle>
           <DialogDescription>
-            Hazir BDD senaryolari iceren bir .xlsx dosyasini bu gruba aktar.
+            Hazır BDD senaryoları içeren bir .xlsx dosyasını bu gruba aktar.
           </DialogDescription>
         </DialogHeader>
 
@@ -103,7 +103,7 @@ export function ImportExcelDialog({
               </div>
               <div className="bg-white p-3 text-center">
                 <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted-foreground">
-                  Basarili
+                  Başarılı
                 </p>
                 <p className="mt-0.5 font-heading text-[22px] font-medium text-[#157449]">
                   {result.successCount}
@@ -111,7 +111,7 @@ export function ImportExcelDialog({
               </div>
               <div className="bg-white p-3 text-center">
                 <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-muted-foreground">
-                  Hatali
+                  Hatalı
                 </p>
                 <p className="mt-0.5 font-heading text-[22px] font-medium text-[#9b2a2a]">
                   {result.failureCount}
@@ -121,8 +121,8 @@ export function ImportExcelDialog({
 
             {!saveResults && (
               <p className="rounded-md bg-muted px-3 py-2 text-[12px] text-muted-foreground">
-                Onizleme modu: satirlar kaydedilmedi. Kaydetmek icin &quot;Sonuclari kaydet&quot;
-                secenegini isaretleyip tekrar deneyin.
+                Önizleme modu: satırlar kaydedilmedi. Kaydetmek için &quot;Sonuçları kaydet&quot;
+                seçeneğini işaretleyip tekrar deneyin.
               </p>
             )}
 
@@ -140,7 +140,7 @@ export function ImportExcelDialog({
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[13px] font-medium text-foreground">
                       <span className="mr-1.5 text-muted-foreground">#{row.rowNumber}</span>
-                      {row.testSummary || row.issueKey || 'Satir'}
+                      {row.testSummary || row.issueKey || 'Satır'}
                     </p>
                     {row.error && (
                       <p className="mt-0.5 text-[12px] text-[#9b2a2a]">{row.error}</p>
@@ -159,7 +159,7 @@ export function ImportExcelDialog({
                   <FileSpreadsheet className="size-5" />
                 </span>
                 <div>
-                  <p className="text-[13px] font-semibold text-foreground">Excel dosyasi sec</p>
+                  <p className="text-[13px] font-semibold text-foreground">Excel dosyası seç</p>
                   <p className="mt-0.5 text-[12px] text-muted-foreground">.xlsx · Maks 5MB</p>
                 </div>
                 <input
@@ -185,7 +185,7 @@ export function ImportExcelDialog({
                   onClick={() => setFile(null)}
                   disabled={importMutation.isPending}
                   className="rounded-md p-1.5 text-muted-foreground hover:bg-muted disabled:opacity-50"
-                  aria-label="Dosyayi kaldir"
+                  aria-label="Dosyayı kaldır"
                 >
                   <X className="size-4" />
                 </button>
@@ -202,10 +202,10 @@ export function ImportExcelDialog({
               />
               <span>
                 <span className="block text-[13px] font-medium text-foreground">
-                  Sonuclari kaydet
+                  Sonuçları kaydet
                 </span>
                 <span className="block text-[12px] text-muted-foreground">
-                  Isaretliyse satirlar bu gruba senaryo olarak eklenir; degilse yalnizca onizlenir.
+                  İşaretliyse satırlar bu gruba senaryo olarak eklenir; değilse yalnızca önizlenir.
                 </span>
               </span>
             </label>
@@ -222,14 +222,14 @@ export function ImportExcelDialog({
                 onClick={() => handleOpenChange(false)}
                 disabled={importMutation.isPending}
               >
-                Iptal
+                İptal
               </Button>
               <Button
                 onClick={() => importMutation.mutate()}
                 disabled={!file || importMutation.isPending}
               >
                 {importMutation.isPending && <Loader2 className="size-4 animate-spin" />}
-                {importMutation.isPending ? 'Aktariliyor...' : 'Iceri aktar'}
+                {importMutation.isPending ? 'Aktarılıyor...' : 'İçeri aktar'}
               </Button>
             </>
           )}

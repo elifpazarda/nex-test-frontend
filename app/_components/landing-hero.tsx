@@ -7,24 +7,24 @@ export function LandingHero() {
       <div className="grid h-full items-start gap-10 pt-6 md:gap-16 md:grid-cols-2">
         <div>
           <span className="mb-[18px] inline-flex items-center rounded-[4px] bg-accent px-2 py-0.5 text-[11px] font-medium text-accent-foreground">
-            Beta · QA ekipleri icin
+            Beta · QA ekipleri için
           </span>
           <h1 className="font-heading text-[clamp(40px,5.4vw,72px)] font-medium leading-[1.02] tracking-[-0.03em] text-foreground">
-            Test senaryolarini <em className="italic text-accent-foreground">elle</em> yazma.
+            Test senaryolarını <em className="italic text-accent-foreground">elle</em> yazma.
             <br />
-            <em className="italic text-accent-foreground">NexTest</em> uretsin.
+            <em className="italic text-accent-foreground">NexTest</em> üretsin.
           </h1>
           <p className="mt-6 max-w-[520px] text-[18px] leading-relaxed text-[var(--palette-neutral-600)]">
-            Metin, Jira ticket&apos;i, Excel veya PDF gereksinim dokumani ver — happy path, edge
-            case ve negatif senaryolari oncelik etiketleriyle saniyeler icinde al. Cucumber veya
-            Playwright koduna tek tikla donustur.
+            Metin, Jira ticket&apos;i, Excel veya PDF gereksinim dokümanı ver — happy path, edge
+            case ve negatif senaryoları öncelik etiketleriyle saniyeler içinde al. Cucumber veya
+            Playwright koduna tek tıkla dönüştür.
           </p>
           <div className="mt-8 flex items-center gap-3">
             <Link
               href="/register"
               className="inline-flex h-12 items-center gap-2 rounded-[10px] bg-primary px-5 text-[16px] font-semibold text-background no-underline shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-[var(--palette-brand-700)]"
             >
-              Ucretsiz basla
+              Ücretsiz başla
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
                 <path
                   d="M4.5 2.5L8 6l-3.5 3.5"
@@ -53,7 +53,7 @@ export function LandingHero() {
                 </span>
               ))}
             </div>
-            <span>120+ QA ekibi NexTest&apos;i kullaniyor</span>
+            <span>120+ QA ekibi NexTest&apos;i kullanıyor</span>
           </div>
         </div>
 

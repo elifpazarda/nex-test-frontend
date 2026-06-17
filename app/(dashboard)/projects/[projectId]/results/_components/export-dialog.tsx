@@ -73,12 +73,12 @@ export function ExportDialog({
     onSuccess: (res) => {
       const base = scope === 'group' ? groupName : projectName;
       downloadBlobResponse(res, `${slugify(base)}.${FORMAT_EXTENSION[format]}`);
-      toast.success('Senaryolar disa aktarildi');
+      toast.success('Senaryolar dışa aktarıldı');
       onOpenChange(false);
     },
     onError: () => {
-      toast.error('Disa aktarilamadi', {
-        description: 'Lutfen tekrar deneyin.',
+      toast.error('Dışa aktarılamadı', {
+        description: 'Lütfen tekrar deneyin.',
         duration: 4000,
       });
     },
@@ -88,9 +88,9 @@ export function ExportDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Senaryolari disa aktar</DialogTitle>
+          <DialogTitle>Senaryoları dışa aktar</DialogTitle>
           <DialogDescription>
-            Kapsam ve format secin; dosya tarayiciniza indirilir.
+            Kapsam ve format seçin; dosya tarayıcınıza indirilir.
           </DialogDescription>
         </DialogHeader>
 
@@ -108,7 +108,7 @@ export function ExportDialog({
                   className="rounded-md border border-border px-3 py-2 text-left text-[13px] text-muted-foreground transition-colors data-active:border-primary data-active:bg-accent data-active:text-foreground"
                 >
                   <span className="block font-medium">
-                    {value === 'group' ? 'Bu grup' : 'Tum proje'}
+                    {value === 'group' ? 'Bu grup' : 'Tüm proje'}
                   </span>
                   <span className="block truncate text-[12px] text-muted-foreground">
                     {value === 'group' ? groupName : projectName}
@@ -148,10 +148,10 @@ export function ExportDialog({
               />
               <span>
                 <span className="block text-[13px] font-medium text-foreground">
-                  Xray formati
+                  Xray formatı
                 </span>
                 <span className="block text-[12px] text-muted-foreground">
-                  Jira Xray ile uyumlu test case kolonlariyla disa aktarir.
+                  Jira Xray ile uyumlu test case kolonlarıyla dışa aktarır.
                 </span>
               </span>
             </label>
@@ -160,8 +160,8 @@ export function ExportDialog({
           {/* Date range */}
           <div className="flex flex-col gap-1.5">
             <span className="text-[13px] font-medium text-foreground">
-              Tarih araligi{' '}
-              <span className="font-normal text-muted-foreground">(istege bagli)</span>
+              Tarih aralığı{' '}
+              <span className="font-normal text-muted-foreground">(isteğe bağlı)</span>
             </span>
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -188,7 +188,7 @@ export function ExportDialog({
             onClick={() => onOpenChange(false)}
             disabled={exportMutation.isPending}
           >
-            Iptal
+            İptal
           </Button>
           <Button onClick={() => exportMutation.mutate()} disabled={exportMutation.isPending}>
             {exportMutation.isPending ? (
@@ -196,7 +196,7 @@ export function ExportDialog({
             ) : (
               <Download className="size-4" />
             )}
-            {exportMutation.isPending ? 'Aktariliyor...' : 'Indir'}
+            {exportMutation.isPending ? 'Aktarılıyor...' : 'İndir'}
           </Button>
         </DialogFooter>
       </DialogContent>

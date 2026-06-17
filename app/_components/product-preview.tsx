@@ -24,36 +24,36 @@ export function ProductPreview() {
               Gereksinim
             </span>
             <p className="mt-2 text-[14px] leading-[1.55] text-foreground">
-              Kullanici gecerli e-posta ve sifre ile giris yapabilmeli. Yanlis girislerde uyari
-              gosterilmeli, 5 basarisiz denemeden sonra hesap 15 dakika kilitlenmeli.
+              Kullanıcı geçerli e-posta ve şifre ile giriş yapabilmeli. Yanlış girişlerde uyarı
+              gösterilmeli, 5 başarısız denemeden sonra hesap 15 dakika kilitlenmeli.
             </p>
           </div>
           {/* Divider */}
           <div className="mb-1.5 flex items-center justify-between border-b border-dashed border-border pb-2.5 text-[12px] text-[var(--palette-neutral-600)]">
-            <span>NexTest 12 senaryo uretti</span>
+            <span>NexTest 12 senaryo üretti</span>
             <span className="font-mono text-[11px] text-[var(--palette-success-600)]">2.4 sn</span>
           </div>
           {/* Scenario rows */}
           <ScenarioRow
             cat="happy_path"
             pri="critical"
-            title="Gecerli kimlik bilgileri ile giris basarili"
+            title="Geçerli kimlik bilgileri ile giriş başarılı"
           />
-          <ScenarioRow cat="negative" pri="high" title="Hatali sifrede uyari goruntulenir" />
+          <ScenarioRow cat="negative" pri="high" title="Hatalı şifrede uyarı görüntülenir" />
           <ScenarioRow
             cat="edge_case"
             pri="medium"
-            title="E-posta buyuk/kucuk harf duyarsiz kabul edilir"
+            title="E-posta büyük/küçük harf duyarsız kabul edilir"
           />
           <ScenarioRow
             cat="negative"
             pri="high"
-            title="5 basarisiz denemeden sonra hesap kilitlenir"
+            title="5 başarısız denemeden sonra hesap kilitlenir"
           />
           <ScenarioRow
             cat="happy_path"
             pri="medium"
-            title="Beni hatirla tercihi 30 gun saklanir"
+            title="Beni hatırla tercihi 30 gün saklanır"
             muted
           />
           {/* Footer badges */}

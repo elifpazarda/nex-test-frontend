@@ -39,8 +39,8 @@ export default function JiraSettingsPage() {
       window.location.href = res.data.data.authUrl;
     },
     onError: (error) => {
-      toast.error('Baglanti baslatilamadi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('Bağlantı başlatılamadı', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -49,13 +49,13 @@ export default function JiraSettingsPage() {
   const disconnectMutation = useMutation({
     mutationFn: () => jiraApi.deleteConnection(),
     onSuccess: () => {
-      toast.success('Jira baglantisi kaldirildi');
+      toast.success('Jira bağlantısı kaldırıldı');
       queryClient.invalidateQueries({ queryKey: ['jira-connection'] });
       setDisconnectOpen(false);
     },
     onError: (error) => {
-      toast.error('Baglanti kaldirilamadi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('Bağlantı kaldırılamadı', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -69,7 +69,7 @@ export default function JiraSettingsPage() {
           Jira <em className="font-medium italic text-[#1a5a40]">Entegrasyonu</em>
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Atlassian hesabinizi baglayarak Jira issue&apos;larindan test senaryolari uretin.
+          Atlassian hesabınızı bağlayarak Jira issue&apos;larından test senaryoları üretin.
         </p>
       </div>
 
@@ -92,7 +92,7 @@ export default function JiraSettingsPage() {
                   </h2>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3ee] px-2 py-0.5 text-[11px] font-medium text-[#157449]">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#1f8a5b]" />
-                    Bagli
+                    Bağlı
                   </span>
                 </div>
                 <p className="mt-0.5 text-[13px] text-[#7a7868]">{connection.siteUrl}</p>
@@ -103,13 +103,13 @@ export default function JiraSettingsPage() {
           <div className="px-6 py-5">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <span className="text-[13px] text-[#5c5a52]">Baglanma tarihi</span>
+                <span className="text-[13px] text-[#5c5a52]">Bağlanma tarihi</span>
                 <span className="text-[13px] font-medium text-[#1a1a18]">
                   {formatDate(connection.connectedAt)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[13px] text-[#5c5a52]">Son guncelleme</span>
+                <span className="text-[13px] text-[#5c5a52]">Son güncelleme</span>
                 <span className="text-[13px] font-medium text-[#1a1a18]">
                   {formatDate(connection.updatedAt)}
                 </span>
@@ -123,7 +123,7 @@ export default function JiraSettingsPage() {
               onClick={() => setDisconnectOpen(true)}
               className="inline-flex h-9 items-center gap-1.5 rounded-[8px] border border-[#e8e1cf] bg-white px-4 text-[13px] font-medium text-[#9b2a2a] shadow-[0_1px_2px_rgba(26,26,24,0.05)] hover:border-[#f7e5e2] hover:bg-[#f7e5e2]"
             >
-              Baglantiyi kes
+              Bağlantıyı kes
             </button>
           </div>
         </div>
@@ -133,10 +133,10 @@ export default function JiraSettingsPage() {
           <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#e8e1cf] bg-[#fbf8f1] text-[#1f5c87]">
             <Plug className="size-7" />
           </span>
-          <h2 className="text-[18px] font-semibold text-[#1a1a18]">Jira hesabinizi baglayin</h2>
+          <h2 className="text-[18px] font-semibold text-[#1a1a18]">Jira hesabınızı bağlayın</h2>
           <p className="mx-auto mt-2 max-w-[400px] text-[14px] text-[#5c5a52]">
-            Atlassian hesabinizi baglayarak Jira issue&apos;larindan direkt test senaryolari
-            uretebilirsiniz.
+            Atlassian hesabınızı bağlayarak Jira issue&apos;larından direkt test senaryoları
+            üretebilirsiniz.
           </p>
 
           <div className="mt-6 flex flex-col items-center gap-3">
@@ -151,21 +151,21 @@ export default function JiraSettingsPage() {
               ) : (
                 <Link2 className="size-4" />
               )}
-              {connectMutation.isPending ? 'Yonlendiriliyor...' : "Jira'ya baglan"}
+              {connectMutation.isPending ? 'Yönlendiriliyor...' : "Jira'ya bağlan"}
             </button>
-            <p className="text-[12px] text-[#a8a595]">Atlassian OAuth 2.0 ile guvenli baglanir</p>
+            <p className="text-[12px] text-[#a8a595]">Atlassian OAuth 2.0 ile güvenli bağlanır</p>
           </div>
 
           <div className="mt-8 border-t border-[#f4efe3] pt-6">
             <h3 className="mb-3 text-[13px] font-semibold text-[#1a1a18]">
-              Entegrasyon ne saglar?
+              Entegrasyon ne sağlar?
             </h3>
             <div className="mx-auto grid max-w-[420px] grid-cols-2 gap-3 text-left">
               {[
-                "Jira issue'larindan senaryo uret",
-                'Issue key ile direkt erisim',
-                'Xray formatinda export',
-                'Tek tikla yeniden baglan',
+                "Jira issue'larından senaryo üret",
+                'Issue key ile direkt erişim',
+                'Xray formatında export',
+                'Tek tıkla yeniden bağlan',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-2 text-[12px] text-[#5c5a52]">
                   <span className="mt-0.5 text-[#1f8a5b]">✓</span>
@@ -180,9 +180,9 @@ export default function JiraSettingsPage() {
       <ConfirmDialog
         open={disconnectOpen}
         onOpenChange={setDisconnectOpen}
-        title="Jira baglantisini kes"
-        description="Jira baglantisi kaldirilacak. Issue'lardan senaryo uretmek icin tekrar baglanmaniz gerekir."
-        confirmLabel="Baglantiyi kes"
+        title="Jira bağlantısını kes"
+        description="Jira bağlantısı kaldırılacak. Issue'lardan senaryo üretmek için tekrar bağlanmanız gerekir."
+        confirmLabel="Bağlantıyı kes"
         variant="destructive"
         isLoading={disconnectMutation.isPending}
         onConfirm={() => disconnectMutation.mutate()}

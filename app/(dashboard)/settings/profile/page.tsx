@@ -70,7 +70,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-[12px] font-medium text-[var(--palette-neutral-400)]">
-                Kayit tarihi
+                Kayıt tarihi
               </p>
               <p className="text-[14px] font-medium text-foreground">{createdDate}</p>
             </div>

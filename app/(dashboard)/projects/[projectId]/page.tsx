@@ -1,12 +1,25 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { Loader2, FolderPlus, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { toast } from 'sonner';
+import { Loader2, FolderPlus, Sparkles, Pencil, Trash2, MoreVertical } from 'lucide-react';
 import { projectsApi } from '@/lib/api/endpoints/projects';
 import { scenarioGroupsApi } from '@/lib/api/endpoints/scenario-groups';
-import type { ScenarioGroupType } from '@/types/scenario-group';
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import type { ScenarioGroup, ScenarioGroupType } from '@/types/scenario-group';
+import type { ApiErrorResponse } from '@/types/api';
+import { EditProjectDialog } from '../_components/edit-project-dialog';
+import { EditScenarioGroupDialog } from './_components/edit-scenario-group-dialog';
 
 const TYPE_COLORS: Record<ScenarioGroupType, { fg: string; bg: string }> = {
   FEATURE: { fg: 'var(--palette-brand-700)', bg: 'var(--palette-brand-50)' },
@@ -22,13 +35,13 @@ const TYPE_COLORS: Record<ScenarioGroupType, { fg: string; bg: string }> = {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins} dk once`;
+  if (mins < 60) return `${mins} dk önce`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} saat once`;
+  if (hours < 24) return `${hours} saat önce`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days} gun once`;
+  if (days < 7) return `${days} gün önce`;
   const weeks = Math.floor(days / 7);
-  return `${weeks} hafta once`;
+  return `${weeks} hafta önce`;
 }
 
 function initials(name: string) {
@@ -42,6 +55,12 @@ function initials(name: string) {
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = use(params);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<ScenarioGroup | null>(null);
+  const [deletingGroup, setDeletingGroup] = useState<ScenarioGroup | null>(null);
 
   const { data: project, isLoading: projectLoading } = useQuery({
     queryKey: ['project', projectId],
@@ -53,6 +72,45 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
     queryKey: ['scenario-groups', projectId],
     queryFn: () => scenarioGroupsApi.listByProject(projectId, 1, 50),
     select: (res) => res.data.data,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => projectsApi.delete(projectId),
+    onSuccess: () => {
+      toast.success('Proje silindi');
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.removeQueries({ queryKey: ['project', projectId] });
+      setDeleteOpen(false);
+      router.push('/projects');
+    },
+    onError: (error: Error) => {
+      let message = 'Proje silinemedi. Lütfen tekrar deneyin.';
+      if (error instanceof AxiosError && error.response?.data) {
+        const body = error.response.data as ApiErrorResponse;
+        const msg = body.error?.message;
+        message = Array.isArray(msg) ? msg.join(', ') : msg || message;
+      }
+      toast.error('Proje silinemedi', { description: message, duration: 4000 });
+    },
+  });
+
+  const deleteGroupMutation = useMutation({
+    mutationFn: (groupId: string) => scenarioGroupsApi.delete(groupId),
+    onSuccess: () => {
+      toast.success('Grup silindi');
+      queryClient.invalidateQueries({ queryKey: ['scenario-groups', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      setDeletingGroup(null);
+    },
+    onError: (error: Error) => {
+      let message = 'Grup silinemedi. Lütfen tekrar deneyin.';
+      if (error instanceof AxiosError && error.response?.data) {
+        const body = error.response.data as ApiErrorResponse;
+        const msg = body.error?.message;
+        message = Array.isArray(msg) ? msg.join(', ') : msg || message;
+      }
+      toast.error('Grup silinemedi', { description: message, duration: 4000 });
+    },
   });
 
   const groups = groupsData?.items ?? [];
@@ -100,19 +158,37 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
             )}
             <div className="mt-3 flex items-center gap-5 text-[13px] text-muted-foreground">
               <span>
-                <span className="text-[var(--palette-neutral-400)]">Olusturuldu</span>{' '}
+                <span className="text-[var(--palette-neutral-400)]">Oluşturuldu</span>{' '}
                 <span className="ml-1">{createdDate}</span>
               </span>
             </div>
           </div>
         </div>
-        <Link
-          href={`/projects/${projectId}/generate`}
-          className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-[13px] font-semibold text-primary-foreground no-underline shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4)] transition-colors hover:bg-[var(--palette-brand-700)]"
-        >
-          <Sparkles className="size-[14px]" />
-          Senaryo uret
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setEditOpen(true)}
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-white px-3.5 text-[13px] font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            <Pencil className="size-[14px]" />
+            Düzenle
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeleteOpen(true)}
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-white px-3.5 text-[13px] font-medium text-[var(--palette-danger-600)] transition-colors hover:border-[var(--palette-danger-500)] hover:bg-[var(--palette-danger-50)]"
+          >
+            <Trash2 className="size-[14px]" />
+            Sil
+          </button>
+          <Link
+            href={`/projects/${projectId}/generate`}
+            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-[13px] font-semibold text-primary-foreground no-underline shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4)] transition-colors hover:bg-[var(--palette-brand-700)]"
+          >
+            <Sparkles className="size-[14px]" />
+            Senaryo üret
+          </Link>
+        </div>
       </section>
 
       {/* Stats */}
@@ -135,7 +211,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
         </div>
         <div className="bg-white p-5">
           <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-[var(--palette-neutral-400)]">
-            Son guncelleme
+            Son güncelleme
           </p>
           <p className="mt-1 font-heading text-[28px] font-medium tracking-tight text-foreground">
             {timeAgo(project.updatedAt)}
@@ -149,9 +225,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
         <section>
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-[18px] font-semibold text-foreground">Senaryo gruplari</h2>
+              <h2 className="text-[18px] font-semibold text-foreground">Senaryo grupları</h2>
               <p className="mt-0.5 text-[13px] text-muted-foreground">
-                Her grup bir kaynaktan uretilmis bir senaryo setidir.
+                Her grup bir kaynaktan üretilmiş bir senaryo setidir.
               </p>
             </div>
           </div>
@@ -163,17 +239,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
                 <FolderPlus className="size-6 text-accent-foreground" />
               </div>
               <h3 className="mt-4 font-heading text-[18px] font-medium text-foreground">
-                Henuz senaryo grubu yok
+                Henüz senaryo grubu yok
               </h3>
               <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
-                Senaryo uret butonuna tiklayarak AI ile ilk test senaryolarinizi olusturun.
+                Senaryo üret butonuna tıklayarak AI ile ilk test senaryolarınızı oluşturun.
               </p>
               <Link
                 href={`/projects/${projectId}/generate`}
                 className="mt-5 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-[13px] font-semibold text-primary-foreground no-underline shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4)] transition-colors hover:bg-[var(--palette-brand-700)]"
               >
                 <Sparkles className="size-4" />
-                Senaryo uret
+                Senaryo üret
               </Link>
             </div>
           )}
@@ -181,17 +257,26 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
           {/* Groups table */}
           {groups.length > 0 && (
             <div className="overflow-hidden rounded-lg border border-border bg-white">
-              <div className="grid grid-cols-[2fr_120px_90px_130px] items-center gap-3 border-b border-border bg-muted px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--palette-neutral-400)]">
+              <div className="grid grid-cols-[2fr_120px_90px_130px_40px] items-center gap-3 border-b border-border bg-muted px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--palette-neutral-400)]">
                 <span>Grup</span>
                 <span>Tip</span>
                 <span>Senaryo</span>
-                <span>Guncellendi</span>
+                <span>Güncellendi</span>
+                <span className="sr-only">Aksiyonlar</span>
               </div>
               {groups.map((g) => (
-                <Link
+                <div
                   key={g.id}
-                  href={`/projects/${projectId}/results?groupId=${g.id}`}
-                  className="grid grid-cols-[2fr_120px_90px_130px] items-center gap-3 border-b border-secondary px-4 py-3 no-underline transition-colors last:border-0 hover:bg-muted"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(`/projects/${projectId}/results?groupId=${g.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/projects/${projectId}/results?groupId=${g.id}`);
+                    }
+                  }}
+                  className="grid cursor-pointer grid-cols-[2fr_120px_90px_130px_40px] items-center gap-3 border-b border-secondary px-4 py-3 transition-colors last:border-0 hover:bg-muted"
                 >
                   <div className="min-w-0">
                     <h3 className="truncate text-[14px] font-medium text-foreground">{g.name}</h3>
@@ -213,7 +298,30 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
                   <span className="text-[12px] text-[var(--palette-neutral-400)]">
                     {timeAgo(g.updatedAt)}
                   </span>
-                </Link>
+                  <div onClick={(e) => e.stopPropagation()} className="flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        aria-label="Grup aksiyonları"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                      >
+                        <MoreVertical className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-36">
+                        <DropdownMenuItem onSelect={() => setEditingGroup(g)}>
+                          <Pencil className="size-3.5" />
+                          Düzenle
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onSelect={() => setDeletingGroup(g)}
+                        >
+                          <Trash2 className="size-3.5" />
+                          Sil
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
               ))}
             </div>
           )}
@@ -223,8 +331,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
         <aside>
           <div className="rounded-lg border border-border bg-white p-5">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-[14px] font-semibold text-foreground">Hizli uret</h3>
-              <span className="text-[12px] text-[var(--palette-neutral-400)]">Bir kaynak sec</span>
+              <h3 className="text-[14px] font-semibold text-foreground">Hızlı üret</h3>
+              <span className="text-[12px] text-[var(--palette-neutral-400)]">Bir kaynak seç</span>
             </div>
             <div className="flex flex-col gap-2">
               {[
@@ -232,25 +340,25 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
                   href: `/projects/${projectId}/generate?source=text`,
                   icon: 'T',
                   label: 'Metinden',
-                  hint: 'Bir paragraf yapistir',
+                  hint: 'Bir paragraf yapıştır',
                 },
                 {
                   href: `/projects/${projectId}/generate?source=jira`,
                   icon: 'J',
                   label: "Jira'dan",
-                  hint: 'Bir issue ile bagla',
+                  hint: 'Bir issue ile bağla',
                 },
                 {
                   href: `/projects/${projectId}/generate?source=excel`,
                   icon: 'E',
                   label: "Excel'den",
-                  hint: 'Toplu yukleme yap',
+                  hint: 'Toplu yükleme yap',
                 },
                 {
                   href: `/projects/${projectId}/generate?source=pdf`,
                   icon: 'P',
                   label: "PDF'den",
-                  hint: 'Dokuman yukle',
+                  hint: 'Doküman yükle',
                 },
               ].map((item) => (
                 <Link
@@ -275,6 +383,42 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
           </div>
         </aside>
       </div>
+
+      <EditProjectDialog open={editOpen} onOpenChange={setEditOpen} project={project} />
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Projeyi sil"
+        description={`"${project.name}" projesini ve içindeki tüm senaryo gruplarını kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+        confirmLabel="Sil"
+        cancelLabel="Vazgeç"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
+        onConfirm={() => deleteMutation.mutate()}
+      />
+      {editingGroup && (
+        <EditScenarioGroupDialog
+          open={!!editingGroup}
+          onOpenChange={(v) => !v && setEditingGroup(null)}
+          group={editingGroup}
+          projectId={projectId}
+        />
+      )}
+      <ConfirmDialog
+        open={!!deletingGroup}
+        onOpenChange={(v) => !v && setDeletingGroup(null)}
+        title="Grubu sil"
+        description={
+          deletingGroup
+            ? `"${deletingGroup.name}" grubunu ve içindeki tüm senaryoları kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`
+            : ''
+        }
+        confirmLabel="Sil"
+        cancelLabel="Vazgeç"
+        variant="destructive"
+        isLoading={deleteGroupMutation.isPending}
+        onConfirm={() => deletingGroup && deleteGroupMutation.mutate(deletingGroup.id)}
+      />
     </div>
   );
 }

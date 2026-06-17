@@ -27,7 +27,7 @@ const GROUP_TYPE_LABELS: Record<string, string> = {
   INTEGRATION: 'Integration',
   E2E: 'E2E',
   PERFORMANCE: 'Performance',
-  OTHER: 'Diger',
+  OTHER: 'Diğer',
 };
 
 export default function GenerateJiraPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -75,8 +75,8 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onError: (error) => {
-      toast.error('Senaryo uretilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('Senaryo üretilemedi', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -113,7 +113,7 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
     },
     onError: (error) => {
       toast.error('Kaydedilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -156,16 +156,16 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
           {project?.name ?? 'Proje'}
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <span className="font-medium text-[#1a1a18]">Jira&apos;dan uret</span>
+        <span className="font-medium text-[#1a1a18]">Jira&apos;dan üret</span>
       </nav>
 
       {/* Hero */}
       <div className="mb-6">
         <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-          <em className="font-medium italic text-[#1a5a40]">Jira</em>&apos;dan uret
+          <em className="font-medium italic text-[#1a5a40]">Jira</em>&apos;dan üret
         </h1>
         <p className="mt-1 text-[15px] text-[#5c5a52]">
-          Bir issue key gir, NexTest o issue&apos;dan senaryolari otomatik uretsin.
+          Bir issue key gir, NexTest o issue&apos;dan senaryoları otomatik üretsin.
         </p>
       </div>
 
@@ -180,22 +180,22 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
           {connectionLoading ? (
             <div className="flex items-center gap-2 rounded-[12px] border border-[#e8e1cf] bg-white px-4 py-3 text-[13px] text-[#7a7868]">
               <Loader2 className="size-4 animate-spin" />
-              Jira baglantisi kontrol ediliyor...
+              Jira bağlantısı kontrol ediliyor...
             </div>
           ) : connectionMissing || !connection ? (
             <div className="flex items-start gap-3 rounded-[12px] border border-[#f0d9a8] bg-[#fbf3df] px-4 py-3">
               <AlertTriangle className="mt-0.5 size-4 flex-shrink-0 text-[#8a6b16]" />
               <div className="flex-1">
-                <p className="text-[13px] font-medium text-[#1a1a18]">Jira baglantisi yok</p>
+                <p className="text-[13px] font-medium text-[#1a1a18]">Jira bağlantısı yok</p>
                 <p className="mt-0.5 text-[12px] text-[#7a7868]">
-                  Issue&apos;dan senaryo uretmek icin once Jira hesabini baglaman gerekir.
+                  Issue&apos;dan senaryo üretmek için önce Jira hesabını bağlaman gerekir.
                 </p>
               </div>
               <Link
                 href="/settings/jira"
                 className="flex-shrink-0 rounded-[8px] bg-[#1f6f4e] px-3 py-1.5 text-[12px] font-semibold text-white no-underline hover:bg-[#1a5a40]"
               >
-                Jira&apos;yi bagla
+                Jira&apos;yı bağla
               </Link>
             </div>
           ) : (
@@ -205,7 +205,7 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
               </span>
               <div className="flex-1">
                 <p className="text-[13px] font-medium text-[#1a1a18]">{connection.siteName}</p>
-                <p className="text-[11px] text-[#5c5a52]">{connection.siteUrl} · Baglanti aktif</p>
+                <p className="text-[11px] text-[#5c5a52]">{connection.siteUrl} · Bağlantı aktif</p>
               </div>
               <span className="h-2 w-2 rounded-full bg-[#1f8a5b]" />
             </div>
@@ -230,7 +230,7 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
                 <input
                   id="issue-key"
                   {...register('issueKey')}
-                  placeholder="Orn: TRND-142"
+                  placeholder="Örn: TRND-142"
                   autoCapitalize="characters"
                   className="h-[42px] w-full rounded-[inherit] border-0 bg-transparent px-3.5 font-mono text-[15px] uppercase text-[#1a1a18] outline-none placeholder:font-sans placeholder:normal-case placeholder:text-[#a8a595]"
                 />
@@ -239,7 +239,7 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
                 <p className="text-[12px] text-[#9b2a2a]">{errors.issueKey.message}</p>
               ) : (
                 <p className="text-[12px] text-[#a8a595]">
-                  Senaryolar bu issue&apos;nun ozet ve aciklamasindan uretilir.
+                  Senaryolar bu issue&apos;nun özet ve açıklamasından üretilir.
                 </p>
               )}
             </div>
@@ -250,12 +250,12 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
         <aside className="sticky top-[88px] flex flex-col gap-4 self-start">
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white">
             <div className="border-b border-[#f4efe3] px-[22px] py-3.5">
-              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarlari</h3>
+              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarları</h3>
             </div>
             <div className="flex flex-col gap-4 p-[18px_22px]">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="group-name" className="text-[13px] font-medium text-[#5c5a52]">
-                  Grup adi
+                  Grup adı
                 </label>
                 <div
                   className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] ${
@@ -267,7 +267,7 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
                   <input
                     id="group-name"
                     {...register('name')}
-                    placeholder="Orn: TRND-142 Senaryolari"
+                    placeholder="Örn: TRND-142 Senaryoları"
                     className="h-[42px] w-full rounded-[inherit] border-0 bg-transparent px-3.5 text-[15px] text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
                   />
                 </div>
@@ -305,10 +305,10 @@ export default function GenerateJiraPage({ params }: { params: Promise<{ project
               ) : (
                 <Sparkles className="size-4" />
               )}
-              {generateMutation.isPending ? 'Uretiliyor...' : 'Senaryo uret'}
+              {generateMutation.isPending ? 'Üretiliyor...' : 'Senaryo üret'}
             </button>
             <p className="mt-3 text-center text-[12px] text-[#7a7868]">
-              AI senaryolari uretir; kaydetmeden once inceleyebilirsin.
+              AI senaryoları üretir; kaydetmeden önce inceleyebilirsin.
             </p>
           </div>
         </aside>

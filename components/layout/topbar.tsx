@@ -15,7 +15,7 @@ import {
 
 const navLinks = [
   { href: '/projects', label: 'Projeler' },
-  { href: '/history', label: 'Gecmis' },
+  { href: '/history', label: 'Geçmiş' },
 ];
 
 export function Topbar() {
@@ -103,7 +103,7 @@ export function Topbar() {
               onClick={logout}
             >
               <LogOut className="size-[15px]" />
-              Cikis yap
+              Çıkış yap
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

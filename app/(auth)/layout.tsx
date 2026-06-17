@@ -48,10 +48,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             &ldquo;
           </div>
           <p className="mt-2 font-heading text-[28px] font-medium leading-[1.25] tracking-tight text-foreground">
-            Bir sprint&apos;te <em className="font-medium italic text-accent-foreground">uc gun</em>{' '}
-            harcadigimiz test senaryosu yazimi, artik{' '}
-            <em className="font-medium italic text-accent-foreground">kahve molasi</em> kadar
-            suruyor.
+            Bir sprint&apos;te <em className="font-medium italic text-accent-foreground">üç gün</em>{' '}
+            harcadığımız test senaryosu yazımı, artık{' '}
+            <em className="font-medium italic text-accent-foreground">kahve molası</em> kadar
+            sürüyor.
           </p>
           <div className="mt-[22px] flex items-center gap-3">
             <span
@@ -61,7 +61,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               AC
             </span>
             <div>
-              <div className="text-[13px] font-medium text-foreground">Asli Cetin</div>
+              <div className="text-[13px] font-medium text-foreground">Aslı Çetin</div>
               <div className="text-[13px] text-[var(--palette-neutral-600)]">QA Lead, Trendyol</div>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Peek card */}
         <div className="relative max-w-[500px] rounded-[16px] border border-border bg-white p-[18px_20px] shadow-[0_18px_40px_-20px_rgba(31,41,38,0.15)]">
           <div className="flex items-center justify-between border-b border-dashed border-border pb-3 text-[12px] uppercase tracking-[0.06em] text-[var(--palette-neutral-400)]">
-            <span>NexTest · Odeme akisi</span>
+            <span>NexTest · Ödeme akışı</span>
             <span className="font-mono normal-case tracking-normal text-[var(--palette-success-600)]">
               1.8 sn
             </span>
@@ -80,7 +80,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-success-50)] px-2.5 py-1 text-[12px] font-medium text-[var(--palette-success-600)]">
               Happy
             </span>
-            <span className="text-foreground">Gecerli kart ile odeme tamamlanir</span>
+            <span className="text-foreground">Geçerli kart ile ödeme tamamlanır</span>
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-danger-600)] px-2.5 py-1 text-[12px] font-medium text-white">
               Kritik
             </span>
@@ -90,9 +90,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-danger-50)] px-2.5 py-1 text-[12px] font-medium text-[var(--palette-danger-600)]">
               Negative
             </span>
-            <span className="text-foreground">Yetersiz bakiye uyarisi gosterilir</span>
+            <span className="text-foreground">Yetersiz bakiye uyarısı gösterilir</span>
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-danger-100)] px-2.5 py-1 text-[12px] font-medium text-destructive">
-              Yuksek
+              Yüksek
             </span>
           </div>
           {/* Row 3 */}
@@ -100,7 +100,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-warning-100)] px-2.5 py-1 text-[12px] font-medium text-[var(--palette-warning-muted)]">
               Edge
             </span>
-            <span className="text-foreground">3D Secure zaman asiminda geri al</span>
+            <span className="text-foreground">3D Secure zaman aşımında geri al</span>
             <span className="inline-flex items-center rounded-[4px] bg-[var(--palette-warning-100)] px-2.5 py-1 text-[12px] font-medium text-[var(--palette-warning-muted)]">
               Orta
             </span>

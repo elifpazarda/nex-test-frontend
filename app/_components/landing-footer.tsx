@@ -18,17 +18,17 @@ export function LandingFooter() {
           <span className="font-heading text-[14px] font-medium text-foreground">NexTest</span>
         </Link>
         <span className="text-[13px] text-[var(--palette-neutral-600)]">
-          © 2026 NexTest — Test senaryosu uretim platformu
+          © 2026 NexTest — Test senaryosu üretim platformu
         </span>
         <div className="flex gap-5">
           <span className="text-[13px] text-[var(--palette-neutral-600)] hover:text-foreground">
             Gizlilik
           </span>
           <span className="text-[13px] text-[var(--palette-neutral-600)] hover:text-foreground">
-            Sartlar
+            Şartlar
           </span>
           <span className="text-[13px] text-[var(--palette-neutral-600)] hover:text-foreground">
-            Iletisim
+            İletişim
           </span>
         </div>
       </div>

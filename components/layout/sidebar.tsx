@@ -5,7 +5,7 @@ import { SidebarNavItem } from './sidebar-nav-item';
 
 const navItems = [
   { href: '/projects', label: 'Projeler', icon: FolderKanban },
-  { href: '/settings/jira', label: 'Jira Ayarlari', icon: Settings },
+  { href: '/settings/jira', label: 'Jira Ayarları', icon: Settings },
 ];
 
 export function Sidebar() {

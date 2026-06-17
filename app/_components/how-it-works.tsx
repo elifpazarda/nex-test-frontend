@@ -3,10 +3,10 @@ export function HowItWorks() {
     <section className="mx-auto max-w-[1200px] px-8 py-[88px]" id="how">
       <div className="mb-14 text-center">
         <span className="mb-3.5 inline-block text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-foreground">
-          Nasil calisir
+          Nasıl çalışır
         </span>
         <h2 className="mx-auto max-w-[720px] font-heading text-[clamp(28px,3.5vw,44px)] font-medium leading-[1.15] tracking-[-0.02em] text-foreground">
-          Uc adimda senaryo, kod, Jira&apos;ya export.
+          Üç adımda senaryo, kod, Jira&apos;ya export.
         </h2>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
@@ -14,17 +14,17 @@ export function HowItWorks() {
           {
             n: '01',
             title: 'Gereksinim ver',
-            desc: 'Duz metin, Jira ticket linki, Excel ya da PDF — fark etmez. NexTest hepsini okur.',
+            desc: 'Düz metin, Jira ticket linki, Excel ya da PDF — fark etmez. NexTest hepsini okur.',
           },
           {
             n: '02',
-            title: 'AI senaryolastirsin',
-            desc: 'Happy path, edge case ve negatif senaryolar; kritik / yuksek / orta / dusuk oncelikle etiketlenir.',
+            title: 'AI senaryolaştırsın',
+            desc: 'Happy path, edge case ve negatif senaryolar; kritik / yüksek / orta / düşük öncelikle etiketlenir.',
           },
           {
             n: '03',
-            title: 'Koda dok, paylas',
-            desc: "Tek tikla Cucumber feature ya da Playwright TypeScript. Jira'ya yorum, PDF rapor.",
+            title: 'Koda dök, paylaş',
+            desc: "Tek tıkla Cucumber feature ya da Playwright TypeScript. Jira'ya yorum, PDF rapor.",
           },
         ].map((step) => (
           <div

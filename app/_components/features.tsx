@@ -3,10 +3,10 @@ export function Features() {
     <section className="mx-auto max-w-[1200px] px-8 pb-[88px]" id="features">
       <div className="mb-14 text-center">
         <span className="mb-3.5 inline-block text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-foreground">
-          Ozellikler
+          Özellikler
         </span>
         <h2 className="font-heading text-[clamp(28px,3.5vw,44px)] font-medium leading-[1.15] tracking-[-0.02em] text-foreground">
-          QA ekipleri icin tasarlandi.
+          QA ekipleri için tasarlandı.
         </h2>
       </div>
       <div
@@ -15,28 +15,28 @@ export function Features() {
       >
         {[
           {
-            title: '4 farkli kaynak',
-            desc: 'Metin, Jira, Excel, PDF. Her biri icin optimize edilmis ozel prompt muhendisligi.',
+            title: '4 farklı kaynak',
+            desc: 'Metin, Jira, Excel, PDF. Her biri için optimize edilmiş özel prompt mühendisliği.',
           },
           {
             title: 'Otomatik etiketleme',
-            desc: 'Senaryo kategorisi (happy/edge/negative) ve onceligi AI tarafindan cikarilir.',
+            desc: 'Senaryo kategorisi (happy/edge/negative) ve önceliği AI tarafından çıkarılır.',
           },
           {
             title: 'Jira entegrasyonu',
-            desc: "Ticket'i linkle cek, uretilen senaryolari Xray test case formatinda geri yorum birak.",
+            desc: "Ticket'i linkle çek, üretilen senaryoları Xray test case formatında geri yorum bırak.",
           },
           {
             title: 'Cucumber + Playwright',
-            desc: 'Gherkin feature dosyalari ya da Playwright TypeScript test fonksiyonlari.',
+            desc: 'Gherkin feature dosyaları ya da Playwright TypeScript test fonksiyonları.',
           },
           {
             title: 'Proje organizasyonu',
-            desc: 'Proje → Senaryo Grubu → Senaryo. Versiyonlama ve gecmis kaydi dahil.',
+            desc: 'Proje → Senaryo Grubu → Senaryo. Versiyonlama ve geçmiş kaydı dahil.',
           },
           {
-            title: 'Tek e-posta + sifre',
-            desc: 'Sosyal login yok, takim hesabi paylasimi yok. Yalin, hizli, tahmin edilebilir.',
+            title: 'Tek e-posta + şifre',
+            desc: 'Sosyal login yok, takım hesabı paylaşımı yok. Yalın, hızlı, tahmin edilebilir.',
           },
         ].map((feat) => (
           <div key={feat.title} className="bg-white px-7 py-8">

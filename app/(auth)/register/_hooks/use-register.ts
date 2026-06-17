@@ -27,17 +27,17 @@ export function useRegister() {
         password: data.password,
       }),
     onSuccess: () => {
-      toast.success('Kayit basarili! Simdi giris yapabilirsiniz.');
+      toast.success('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
       router.push('/login');
     },
     onError: (error: Error) => {
-      let message = 'Kayit yapilamadi. Lutfen tekrar deneyin.';
+      let message = 'Kayıt yapılamadı. Lütfen tekrar deneyin.';
       if (error instanceof AxiosError && error.response?.data) {
         const body = error.response.data as ApiErrorResponse;
         const msg = body.error?.message;
         message = Array.isArray(msg) ? msg.join(', ') : msg || message;
       }
-      toast.error('Kayit basarisiz', { description: message, duration: 4000 });
+      toast.error('Kayıt başarısız', { description: message, duration: 4000 });
     },
   });
 

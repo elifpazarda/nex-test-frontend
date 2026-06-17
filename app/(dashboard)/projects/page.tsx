@@ -40,13 +40,13 @@ export default function ProjectsPage() {
   const timeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins} dk once`;
+    if (mins < 60) return `${mins} dk önce`;
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} saat once`;
+    if (hours < 24) return `${hours} saat önce`;
     const days = Math.floor(hours / 24);
-    if (days < 7) return `${days} gun once`;
+    if (days < 7) return `${days} gün önce`;
     const weeks = Math.floor(days / 7);
-    return `${weeks} hafta once`;
+    return `${weeks} hafta önce`;
   };
 
   return (
@@ -54,13 +54,13 @@ export default function ProjectsPage() {
       {/* Hero */}
       <div className="mb-10">
         <h1 className="font-heading text-[32px] font-medium leading-[1.1] tracking-tight text-foreground">
-          Tekrar hos geldin,{' '}
+          Tekrar hoş geldin,{' '}
           {firstName && <em className="font-medium italic text-accent-foreground">{firstName}</em>}.
         </h1>
         <p className="mt-2 text-[15px] text-muted-foreground">
           {projects.length > 0
             ? `${projects.length} aktif projen var.`
-            : 'Henuz bir projen yok. Ilk projeni olusturarak basla!'}
+            : 'Henüz bir projen yok. İlk projeni oluşturarak başla!'}
         </p>
         {projects.length > 0 && (
           <button
@@ -87,17 +87,17 @@ export default function ProjectsPage() {
             <FolderPlus className="size-7 text-accent-foreground" />
           </div>
           <h2 className="mt-5 font-heading text-[22px] font-medium text-foreground">
-            Henuz proje olusturmadiniz
+            Henüz proje oluşturmadınız
           </h2>
           <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-muted-foreground">
-            Ilk projenizi olusturun ve AI destekli test senaryolari uretmeye hemen baslayin.
+            İlk projenizi oluşturun ve AI destekli test senaryoları üretmeye hemen başlayın.
           </p>
           <button
             onClick={() => setDialogOpen(true)}
             className="mt-6 inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-[14px] font-semibold text-primary-foreground shadow-[0_6px_18px_-6px_rgba(31,111,78,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] transition-[background,transform] duration-100 hover:bg-[var(--palette-brand-700)] active:translate-y-[0.5px] active:bg-[var(--palette-brand-800)]"
           >
             <FolderPlus className="size-4" />
-            Ilk projeni olustur
+            İlk projeni oluştur
           </button>
         </div>
       )}
@@ -129,7 +129,7 @@ export default function ProjectsPage() {
             ))}
             <div className="bg-white p-5">
               <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-[var(--palette-neutral-400)]">
-                Son guncelleme
+                Son güncelleme
               </p>
               <p className="mt-1 font-heading text-[28px] font-medium tracking-tight text-foreground">
                 {projects.length > 0 ? timeAgo(projects[0].updatedAt) : '-'}
@@ -174,9 +174,9 @@ export default function ProjectsPage() {
           {filtered.length === 0 && q.length > 0 && (
             <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--palette-neutral-300)] bg-[var(--palette-neutral-50)] px-6 py-16 text-center">
               <Search className="size-8 text-[var(--palette-neutral-400)]" />
-              <h3 className="mt-4 text-[16px] font-semibold text-foreground">Sonuc bulunamadi</h3>
+              <h3 className="mt-4 text-[16px] font-semibold text-foreground">Sonuç bulunamadı</h3>
               <p className="mt-1 text-[13px] text-muted-foreground">
-                &ldquo;{q}&rdquo; ile eslesen proje yok.
+                &ldquo;{q}&rdquo; ile eşleşen proje yok.
               </p>
             </div>
           )}
@@ -199,7 +199,7 @@ export default function ProjectsPage() {
                         {p.name}
                       </h3>
                       <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
-                        {p.description || 'Aciklama yok'}
+                        {p.description || 'Açıklama yok'}
                       </p>
                     </div>
                   </div>
@@ -247,7 +247,7 @@ export default function ProjectsPage() {
                 <span>Proje</span>
                 <span>Grup</span>
                 <span>Senaryo</span>
-                <span>Guncellendi</span>
+                <span>Güncellendi</span>
               </div>
               {filtered.map((p) => (
                 <Link
@@ -262,7 +262,7 @@ export default function ProjectsPage() {
                     <div className="min-w-0">
                       <h3 className="truncate text-[14px] font-medium text-foreground">{p.name}</h3>
                       <p className="truncate text-[12px] text-muted-foreground">
-                        {p.description || 'Aciklama yok'}
+                        {p.description || 'Açıklama yok'}
                       </p>
                     </div>
                   </div>

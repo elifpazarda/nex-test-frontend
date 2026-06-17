@@ -26,13 +26,13 @@ const GROUP_TYPE_LABELS: Record<string, string> = {
   INTEGRATION: 'Integration',
   E2E: 'E2E',
   PERFORMANCE: 'Performance',
-  OTHER: 'Diger',
+  OTHER: 'Diğer',
 };
 
 const EXAMPLE_TEXT =
-  'Kullanici sepetine urun ekledikten sonra odeme sayfasina gecer. Kredi karti, banka ' +
-  'karti veya havale ile odeme yapabilir. Yanlis kart bilgisi girilirse hata mesaji ' +
-  'gosterilir; 3 basarisiz denemeden sonra islem 5 dakika kilitlenir.';
+  'Kullanıcı sepetine ürün ekledikten sonra ödeme sayfasına geçer. Kredi kartı, banka ' +
+  'kartı veya havale ile ödeme yapabilir. Yanlış kart bilgisi girilirse hata mesajı ' +
+  'gösterilir; 3 başarısız denemeden sonra işlem 5 dakika kilitlenir.';
 
 export default function GenerateTextPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = use(params);
@@ -73,8 +73,8 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onError: (error) => {
-      toast.error('Senaryo uretilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+      toast.error('Senaryo üretilemedi', {
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -110,7 +110,7 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
     },
     onError: (error) => {
       toast.error('Kaydedilemedi', {
-        description: getApiErrorMessage(error, 'Lutfen tekrar deneyin.'),
+        description: getApiErrorMessage(error, 'Lütfen tekrar deneyin.'),
         duration: 4000,
       });
     },
@@ -153,17 +153,17 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
           {project?.name ?? 'Proje'}
         </Link>
         <span className="text-[#a8a595]">/</span>
-        <span className="font-medium text-[#1a1a18]">Yeni grup olustur</span>
+        <span className="font-medium text-[#1a1a18]">Yeni grup oluştur</span>
       </nav>
 
       {/* Hero */}
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="font-heading text-[32px] font-medium tracking-tight text-[#1a1a18]">
-            <em className="font-medium italic text-[#1a5a40]">Senaryo</em> uret
+            <em className="font-medium italic text-[#1a5a40]">Senaryo</em> üret
           </h1>
           <p className="mt-1 text-[15px] text-[#5c5a52]">
-            Bir paragraf yapistir, NexTest senin icin BDD senaryolari hazirlasin.
+            Bir paragraf yapıştır, NexTest senin için BDD senaryoları hazırlasın.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -172,13 +172,13 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
             onClick={() => setValue('input', EXAMPLE_TEXT, { shouldValidate: true })}
             className="rounded-[8px] px-3 py-2 text-[13px] font-medium text-[#5c5a52] hover:bg-[#f4efe3]"
           >
-            Ornek doldur
+            Örnek doldur
           </button>
           <Link
             href={`/projects/${projectId}`}
             className="rounded-[8px] px-3 py-2 text-[13px] font-medium text-[#5c5a52] no-underline hover:bg-[#f4efe3]"
           >
-            Vazgec
+            Vazgeç
           </Link>
         </div>
       </div>
@@ -194,13 +194,13 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
             <div className="flex items-center justify-between border-b border-[#f4efe3] px-[22px] py-3.5">
               <h3 className="text-[14px] font-semibold text-[#1a1a18]">Kaynak metin</h3>
               <span className="text-[12px] text-[#a8a595]">
-                PRD, gereksinim notu, kullanici hikayesi...
+                PRD, gereksinim notu, kullanıcı hikayesi...
               </span>
             </div>
             <div className="relative p-[18px_22px]">
               <textarea
                 {...register('input')}
-                placeholder="Orn: Kullanici sepete urun ekledikten sonra odeme sayfasina gecis yapar. Kredi karti, banka karti veya havale ile odeme yapabilir..."
+                placeholder="Örn: Kullanıcı sepete ürün ekledikten sonra ödeme sayfasına geçiş yapar. Kredi kartı, banka kartı veya havale ile ödeme yapabilir..."
                 className="min-h-[280px] w-full resize-y border-0 bg-transparent text-[15px] leading-relaxed text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
               />
               <div className="absolute bottom-5 right-6 text-[12px] text-[#a8a595]">
@@ -212,9 +212,9 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
               {errors.input ? (
                 <span className="text-[#9b2a2a]">{errors.input.message}</span>
               ) : (
-                <span className="text-[#a8a595]">10 – 2000 karakter arasi</span>
+                <span className="text-[#a8a595]">10 – 2000 karakter arası</span>
               )}
-              <span className="text-[#a8a595]">{charCount < 10 ? 'Eksik' : 'Hazir'}</span>
+              <span className="text-[#a8a595]">{charCount < 10 ? 'Eksik' : 'Hazır'}</span>
             </div>
           </div>
         </section>
@@ -224,12 +224,12 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
           {/* Group settings */}
           <div className="rounded-[14px] border border-[#e8e1cf] bg-white">
             <div className="border-b border-[#f4efe3] px-[22px] py-3.5">
-              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarlari</h3>
+              <h3 className="text-[14px] font-semibold text-[#1a1a18]">Grup ayarları</h3>
             </div>
             <div className="flex flex-col gap-4 p-[18px_22px]">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="group-name" className="text-[13px] font-medium text-[#5c5a52]">
-                  Grup adi
+                  Grup adı
                 </label>
                 <div
                   className={`flex items-center rounded-[10px] border bg-white shadow-[inset_0_1px_2px_rgba(26,26,24,0.04)] ${
@@ -241,7 +241,7 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
                   <input
                     id="group-name"
                     {...register('name')}
-                    placeholder="Orn: Sepet · Odeme"
+                    placeholder="Örn: Sepet · Ödeme"
                     className="h-[42px] w-full rounded-[inherit] border-0 bg-transparent px-3.5 text-[15px] text-[#1a1a18] outline-none placeholder:text-[#a8a595]"
                   />
                 </div>
@@ -280,10 +280,10 @@ export default function GenerateTextPage({ params }: { params: Promise<{ project
               ) : (
                 <Sparkles className="size-4" />
               )}
-              {generateMutation.isPending ? 'Uretiliyor...' : 'Senaryo uret'}
+              {generateMutation.isPending ? 'Üretiliyor...' : 'Senaryo üret'}
             </button>
             <p className="mt-3 text-center text-[12px] text-[#7a7868]">
-              AI senaryolari uretir; kaydetmeden once inceleyebilirsin.
+              AI senaryoları üretir; kaydetmeden önce inceleyebilirsin.
             </p>
           </div>
         </aside>
