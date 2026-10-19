@@ -2,7 +2,16 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { GitBranch, Settings2, RefreshCw, History, Trash2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  GitBranch,
+  Settings2,
+  RefreshCw,
+  History,
+  Trash2,
+  ArrowRight,
+} from 'lucide-react';
+import { scenarioGroupsApi } from '@/lib/api/endpoints/scenario-groups';
 import { CopyField } from './copy-field';
 import type { ScmConnection } from '@/types/scm-webhook';
 
@@ -35,6 +44,20 @@ function Badge({
 }
 
 export function ConnectionCard({ connection, onEdit, onRotate, onDelete }: Props) {
+  // Hedef grup adini coz (yalnizca autoGenerate + targetGroupId varsa)
+  const { data: group } = useQuery({
+    queryKey: ['scenario-group', connection.targetGroupId],
+    queryFn: () => scenarioGroupsApi.getById(connection.targetGroupId as string),
+    select: (res) => res.data.data,
+    enabled: !!connection.targetGroupId,
+  });
+
+  const showTarget = connection.autoGenerate && !!connection.targetGroupId;
+  const scenariosHref =
+    connection.projectId && connection.targetGroupId
+      ? `/projects/${connection.projectId}/results?groupId=${connection.targetGroupId}`
+      : null;
+
   return (
     <div className="rounded-[14px] border border-[#e8e1cf] bg-white">
       <div className="flex items-start gap-4 border-b border-[#f4efe3] px-6 py-5">
@@ -70,7 +93,28 @@ export function ConnectionCard({ connection, onEdit, onRotate, onDelete }: Props
         </div>
       </div>
 
-      <div className="px-6 py-5">
+      <div className="flex flex-col gap-4 px-6 py-5">
+        {showTarget && (
+          <div className="flex items-center justify-between gap-3 rounded-[10px] bg-[#f4efe3] px-3 py-2.5">
+            <p className="min-w-0 text-[12.5px] text-[#5c5a52]">
+              Üretilen senaryolar →{' '}
+              <span className="font-medium text-[#1a1a18]">
+                {group?.name ?? 'yükleniyor…'}
+              </span>{' '}
+              grubuna yazılır
+            </p>
+            {scenariosHref && (
+              <Link
+                href={scenariosHref}
+                className="inline-flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-[#1a5a40] hover:underline"
+              >
+                Senaryoları gör
+                <ArrowRight className="size-3.5" />
+              </Link>
+            )}
+          </div>
+        )}
+
         <CopyField label="Payload URL" value={connection.webhookUrl} />
       </div>
 

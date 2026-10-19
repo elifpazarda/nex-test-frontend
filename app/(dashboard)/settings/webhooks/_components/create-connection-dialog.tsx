@@ -139,7 +139,8 @@ export function CreateConnectionDialog({ open, onOpenChange }: Props) {
                   value={projectId}
                   onChange={(e) => {
                     setValue('projectId', e.target.value);
-                    setValue('targetGroupId', '', { shouldValidate: true });
+                    setValue('targetGroupId', '');
+                    setValue('autoGenerate', false, { shouldValidate: true });
                   }}
                 >
                   <option value="">Seçilmedi</option>
@@ -155,9 +156,11 @@ export function CreateConnectionDialog({ open, onOpenChange }: Props) {
                 <Select
                   value={targetGroupId}
                   disabled={!projectId}
-                  onChange={(e) =>
-                    setValue('targetGroupId', e.target.value, { shouldValidate: true })
-                  }
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setValue('targetGroupId', v, { shouldValidate: true });
+                    if (!v) setValue('autoGenerate', false, { shouldValidate: true });
+                  }}
                 >
                   <option value="">{projectId ? 'Seçilmedi' : 'Önce proje seçin'}</option>
                   {groups?.map((g) => (
@@ -175,11 +178,14 @@ export function CreateConnectionDialog({ open, onOpenChange }: Props) {
                     Otomatik senaryo üret
                   </p>
                   <p className="text-[12px] text-[#7a7868]">
-                    issue/PR açıldığında AI ile senaryo üretir
+                    {targetGroupId
+                      ? 'issue/PR açıldığında AI ile senaryo üretir'
+                      : 'Önce bir hedef grup seçin'}
                   </p>
                 </div>
                 <Toggle
                   checked={autoGenerate}
+                  disabled={!targetGroupId}
                   onChange={(v) => setValue('autoGenerate', v, { shouldValidate: true })}
                 />
               </div>

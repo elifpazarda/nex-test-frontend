@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Loader2, Plus, Webhook } from 'lucide-react';
+import { Loader2, Plus, Webhook, AlertCircle } from 'lucide-react';
 import { scmWebhooksApi } from '@/lib/api/endpoints/scm-webhooks';
 import { getApiErrorMessage } from '@/lib/api/error';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
@@ -20,7 +20,13 @@ export default function WebhooksSettingsPage() {
   const [rotateTarget, setRotateTarget] = useState<ScmConnection | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ScmConnection | null>(null);
 
-  const { data: connections, isLoading } = useQuery({
+  const {
+    data: connections,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: ['scm-connections'],
     queryFn: () => scmWebhooksApi.list(),
     select: (res) => res.data.data,
@@ -67,6 +73,25 @@ export default function WebhooksSettingsPage() {
       {isLoading ? (
         <div className="flex items-center justify-center rounded-[14px] border border-[#e8e1cf] bg-white py-20">
           <Loader2 className="size-6 animate-spin text-[#7a7868]" />
+        </div>
+      ) : isError ? (
+        <div className="rounded-[14px] border border-[#f0d9d2] bg-[#fdf3f1] p-8 text-center">
+          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#f0d9d2] bg-white text-[#9b2a2a]">
+            <AlertCircle className="size-7" />
+          </span>
+          <h2 className="text-[18px] font-semibold text-[#1a1a18]">Bağlantılar yüklenemedi</h2>
+          <p className="mx-auto mt-2 max-w-[420px] text-[14px] text-[#5c5a52]">
+            Oturumunuz sona ermiş olabilir veya sunucuya ulaşılamıyor. Lütfen tekrar deneyin.
+          </p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="mx-auto mt-6 inline-flex h-10 items-center gap-2 rounded-[10px] border border-[#e8e1cf] bg-white px-5 text-[14px] font-semibold text-[#1a1a18] hover:bg-[#f4efe3] disabled:opacity-55"
+          >
+            {isFetching && <Loader2 className="size-4 animate-spin" />}
+            Tekrar dene
+          </button>
         </div>
       ) : connections && connections.length > 0 ? (
         <div className="flex flex-col gap-4">
