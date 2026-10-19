@@ -1,10 +1,11 @@
 'use client';
 
-import { FolderKanban, Settings, Leaf } from 'lucide-react';
+import { FolderKanban, Settings, Leaf, Webhook } from 'lucide-react';
 import { SidebarNavItem } from './sidebar-nav-item';
 
 const navItems = [
   { href: '/projects', label: 'Projeler', icon: FolderKanban },
+  { href: '/settings/webhooks', label: 'Webhooks', icon: Webhook },
   { href: '/settings/jira', label: 'Jira Ayarları', icon: Settings },
 ];
 
